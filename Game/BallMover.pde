@@ -13,12 +13,12 @@ class BallMover {
   
   BallMover(Plate plate) {
     this.plate = plate;
-    this.p = new PVector(0, -plate.size.y - 16, 0);
-    this.v = new PVector(0, 0, 0);
+    this.p = new PVector(0f, -plate.size.y - 16f, 0f);
+    this.v = new PVector(0f, 0f, 0f);
   }
   
   void update() {
-    PVector gf = new PVector(sin(plate.rot.z), 0, -sin(plate.rot.x));
+    PVector gf = new PVector(sin(plate.rot.z), 0f, -sin(plate.rot.x));
     PVector ff = v.get();
     
     ff.mult(-1);
@@ -33,20 +33,20 @@ class BallMover {
   }
   
   void display() {
-     fill(127);
+     // fill(127);
      translate(p.x, p.y, p.z);
      sphere(25);
   }
   
   void checkEdges() {
     float ax = e * abs(this.v.x), az = e * abs(this.v.z);
-    float maxX = plate.size.x / 2, maxZ = plate.size.z / 2;
+    float maxX = plate.size.x / 2f, maxZ = plate.size.z / 2f;
     
-    if (p.x >  maxX) this.v.x = -1 * ax;
-    if (p.x < -maxX) this.v.x =  1 * ax;
+    if (p.x >  maxX) this.v.x = -1f * ax;
+    if (p.x < -maxX) this.v.x =  1f * ax;
     
-    if (p.z >  maxZ) this.v.z = -1 * az;
-    if (p.z < -maxZ) this.v.z =  1 * az;
+    if (p.z >  maxZ) this.v.z = -1f * az;
+    if (p.z < -maxZ) this.v.z =  1f * az;
   }
   
 }

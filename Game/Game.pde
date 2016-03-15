@@ -1,23 +1,21 @@
-
-Plate plate; // === PLATEAU
-final PVector size = new PVector(500, 20, 500); // Position du plateau
-final PVector plateRotation = new PVector(0F, 0, 0F); // Rotation du plateau
-
-BallMover ballMover; // === BALLE
+Plate plate;
+BallMover ballMover;
 
 void settings() {
-  //fullScreen(P3D);
   size(1000, 1000, P3D);
 }
 
 void setup() {
   noStroke();
-  plate = new Plate(size, plateRotation);
+  plate = new Plate();
   ballMover = new BallMover(plate);
 }
 
 void draw() {
     background(255);
+    
+    //camera(width/2.0, -height/4.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0, height/2.0, 0, 0, 1, 0);
+    lights();
     
     plate.displayInfo();
     plate.display();

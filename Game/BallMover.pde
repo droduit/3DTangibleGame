@@ -17,7 +17,7 @@ class BallMover {
   }
   
   void update() {
-    PVector gf = new PVector(-sin(plate.rot.z), 0, -sin(plate.rot.x));
+    PVector gf = new PVector(sin(plate.rot.z), 0, -sin(plate.rot.x));
     PVector ff = v.get();
     
     ff.mult(-1);
@@ -37,15 +37,14 @@ class BallMover {
   }
   
   void checkEdges() {
-     /*
-    if (location.x >= ( (width/2.0) + (size.x/2.0) ) || location.x <= ( (width/2.0) - (size.x/2.0) ) ) {
-      velocity.x *= -1;
-    }
-
-    if (location.y >= height || location.y <= 0) {
-      velocity.y *= (-1);
-    }
-    */
+    float ax = abs(this.v.x), az = abs(this.v.z);
+    float maxX = plate.size.x / 2, maxZ = plate.size.z / 2;
+    
+    if (p.x >  maxX) this.v.x = -1 * ax;
+    if (p.x < -maxX) this.v.x =  1 * ax;
+    
+    if (p.z >  maxZ) this.v.z = -1 * az;
+    if (p.z < -maxZ) this.v.z =  1 * az;
   }
   
 }

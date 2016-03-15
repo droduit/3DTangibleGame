@@ -23,7 +23,6 @@ void draw() {
     plate.display();
     
     ballMover.update();
-    ballMover.checkEdges();
     ballMover.display();
 }
 

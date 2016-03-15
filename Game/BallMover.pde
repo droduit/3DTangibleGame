@@ -3,6 +3,7 @@ class BallMover {
   final float g = 9.81;
   final float normalForce = 1;
   final float mu = 0.01;
+  final float e = 0.6;
   final float fm = normalForce * mu;
   
   PVector p; // Position de la balle
@@ -27,6 +28,7 @@ class BallMover {
     PVector a = gf.add(ff);
     this.v.add(a);
     
+    this.checkEdges();
     this.p.add(v);
   }
   
@@ -37,7 +39,7 @@ class BallMover {
   }
   
   void checkEdges() {
-    float ax = abs(this.v.x), az = abs(this.v.z);
+    float ax = e * abs(this.v.x), az = e * abs(this.v.z);
     float maxX = plate.size.x / 2, maxZ = plate.size.z / 2;
     
     if (p.x >  maxX) this.v.x = -1 * ax;

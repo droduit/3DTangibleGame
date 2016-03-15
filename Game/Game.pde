@@ -1,6 +1,6 @@
 
 Plate plate; // === PLATEAU
-final PVector plateSize = new PVector(500, 20, 500); // Position du plateau
+final PVector size = new PVector(500, 20, 500); // Position du plateau
 final PVector plateRotation = new PVector(0F, 0, 0F); // Rotation du plateau
 
 BallMover ballMover; // === BALLE
@@ -12,8 +12,8 @@ void settings() {
 
 void setup() {
   noStroke();
-  ballMover = new BallMover(plateSize, plateRotation);
-  plate = new Plate(plateSize, plateRotation);
+  plate = new Plate(size, plateRotation);
+  ballMover = new BallMover(plate);
 }
 
 void draw() {
@@ -34,5 +34,4 @@ void mouseWheel(MouseEvent event) {
 
 void mouseDragged() {
     plate.mouseDraggedEvent();
-    ballMover.trigger();
 }

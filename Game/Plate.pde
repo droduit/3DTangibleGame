@@ -1,7 +1,7 @@
 class Plate {
   // ==== PLATEAU
-  PVector plateSize; // Position du plateau
-  PVector plateRotation; // Rotation du plateau
+  PVector size; // Position du plateau
+  PVector rot; // Rotation du plateau
   
   final float minAngle = -PI/3; // Angle minimum du plateau
   final float maxAngle = PI/3; // Angle maximum du plateau
@@ -13,9 +13,9 @@ class Plate {
   final float SPEED_STEP = 0.1; // Increase step de la vitesse de mouvement
 
 
-  Plate(PVector plateSize, PVector plateRotation) {
-    this.plateSize = plateSize;
-    this.plateRotation = plateRotation;
+  Plate(PVector size, PVector rot) {
+    this.size = size;
+    this.rot = rot;
   }
   
   void display() {
@@ -30,9 +30,9 @@ class Plate {
     
     translate(width/2, height/2, 0);
     
-    rotateX(plateRotation.x);
-    rotateZ(plateRotation.z);
-    box(plateSize.x, plateSize.y, plateSize.z);
+    rotateX(rot.x);
+    rotateZ(rot.z);
+    box(size.x, size.y, size.z);
   }
   
   /**
@@ -41,8 +41,8 @@ class Plate {
   void displayInfo() {
     textSize(12);
     fill(0, 0, 0);
-    text("RotationX : "+nf(degrees(plateRotation.x), 0, 1), 0, 15, 0);
-    text("RotationZ : "+nf(degrees(plateRotation.z),0,1), 130, 15, 0);
+    text("RotationX : "+nf(degrees(rot.x), 0, 1), 0, 15, 0);
+    text("RotationZ : "+nf(degrees(rot.z),0,1), 130, 15, 0);
     text("Speed : "+nf(speed,0,1), 250, 15, 0);
   }
   
@@ -58,15 +58,15 @@ class Plate {
   void mouseDraggedEvent() {
     int dy = Utils.clamp(mouseY - pmouseY, -1, 1);
     
-    plateRotation.x = Utils.clamp(
-      plateRotation.x + dy * movingVelocity * speed,
+    rot.x = Utils.clamp(
+      rot.x + dy * movingVelocity * speed,
       minAngle, maxAngle
     );
     
     int dx = Utils.clamp(mouseX - pmouseX, -1, 1);
     
-    plateRotation.z = Utils.clamp(
-      plateRotation.z + dx * movingVelocity * speed,
+    rot.z = Utils.clamp(
+      rot.z + dx * movingVelocity * speed,
       minAngle, maxAngle
     );
   }

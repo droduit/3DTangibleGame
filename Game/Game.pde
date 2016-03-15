@@ -1,15 +1,19 @@
-final PVector PLATE_LOCATION = new PVector(500, 20, 500);
-final PVector PLATE_ROTATE = new PVector(0F, 0, 0F);
+// ==== PLATEAU
+final PVector P_LOCATION = new PVector(500, 20, 500); // Position du plateau
+final PVector P_ROTATE = new PVector(0F, 0, 0F); // Rotation du plateau
 
-final float minAngle = -PI/3;
-final float maxAngle = PI/3;
-final float movingVelocity = 2*(PI/180);
+final float minAngle = -PI/3; // Angle minimum du plateau
+final float maxAngle = PI/3; // Angle maximum du plateau
+final float movingVelocity = 2*(PI/180); // Vitesse de mouvement du plateau
 
-float speed = 1.0; 
-final float MIN_SPEED = 0.2;
-final float MAX_SPEED = 1.5;
-final float SPEED_STEP = 0.1;
+float speed = 1.0; // Vitesse affichée au départ
+final float MIN_SPEED = 0.2; // Vitesse min de mouvement du plateau
+final float MAX_SPEED = 1.5; // Vitesse max de mouvement du plateau
+final float SPEED_STEP = 0.1; // Increase step de la vitesse de mouvement
 
+// === BALLE
+final PVector B_LOCATION = new PVector(0, 0, 0); // Position de la balle 
+final PVector B_VELOCITY = new PVector(2.5, 5, 0); // Vitesse de la balle
 
 void settings() {
   fullScreen(P3D);
@@ -35,9 +39,9 @@ void draw() {
     
     translate(width/2, height/2, 0);
     
-    rotateX(PLATE_ROTATE.x);
-    rotateZ(PLATE_ROTATE.z);
-    box(PLATE_LOCATION.x, PLATE_LOCATION.y, PLATE_LOCATION.z);
+    rotateX(P_ROTATE.x);
+    rotateZ(P_ROTATE.z);
+    box(P_LOCATION.x, P_LOCATION.y, P_LOCATION.z);
     
     /*
     translate(0, 0, PLATE_Z);
@@ -51,8 +55,8 @@ void draw() {
 void displayInfo() {
   textSize(12);
   fill(0, 0, 0);
-  text("RotationX : "+nf(degrees(PLATE_ROTATE.x), 0, 1), 0, 15, 0);
-  text("RotationZ : "+nf(degrees(PLATE_ROTATE.z),0,1), 130, 15, 0);
+  text("RotationX : "+nf(degrees(P_ROTATE.x), 0, 1), 0, 15, 0);
+  text("RotationZ : "+nf(degrees(P_ROTATE.z),0,1), 130, 15, 0);
   text("Speed : "+nf(speed,0,1), 250, 15, 0);
 }
 
@@ -69,15 +73,15 @@ void mouseWheel(MouseEvent event) {
 void mouseDragged() {
      
     if(mouseY - pmouseY > 0) {
-       if(PLATE_ROTATE.x>minAngle) PLATE_ROTATE.x -= movingVelocity* speed; else PLATE_ROTATE.x = minAngle;
+       if(P_ROTATE.x>minAngle) P_ROTATE.x -= movingVelocity* speed; else P_ROTATE.x = minAngle;
      } else {
-       if(PLATE_ROTATE.x<maxAngle) PLATE_ROTATE.x += movingVelocity* speed; else PLATE_ROTATE.x = maxAngle;
+       if(P_ROTATE.x<maxAngle) P_ROTATE.x += movingVelocity* speed; else P_ROTATE.x = maxAngle;
      }
     
      if(mouseX - pmouseX > 0) {
-       if(PLATE_ROTATE.z < maxAngle) PLATE_ROTATE.z += movingVelocity * speed; else PLATE_ROTATE.z = maxAngle;
+       if(P_ROTATE.z < maxAngle) P_ROTATE.z += movingVelocity * speed; else P_ROTATE.z = maxAngle;
      } else {
-       if(PLATE_ROTATE.z > minAngle) PLATE_ROTATE.z -= movingVelocity * speed; else PLATE_ROTATE.z = minAngle;
+       if(P_ROTATE.z > minAngle) P_ROTATE.z -= movingVelocity * speed; else P_ROTATE.z = minAngle;
      }
      
 }

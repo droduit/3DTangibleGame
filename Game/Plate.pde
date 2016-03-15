@@ -54,21 +54,21 @@ class Plate {
        if(speed >= MIN_SPEED) speed -= SPEED_STEP;
      }
   }
-  
+
   void mouseDraggedEvent() {
-       
-      if(mouseY - pmouseY > 0) {
-         if(plateRotation.x>minAngle) plateRotation.x -= movingVelocity* speed; else plateRotation.x = minAngle;
-       } else {
-         if(plateRotation.x<maxAngle) plateRotation.x += movingVelocity* speed; else plateRotation.x = maxAngle;
-       }
-      
-       if(mouseX - pmouseX > 0) {
-         if(plateRotation.z < maxAngle) plateRotation.z += movingVelocity * speed; else plateRotation.z = maxAngle;
-       } else {
-         if(plateRotation.z > minAngle) plateRotation.z -= movingVelocity * speed; else plateRotation.z = minAngle;
-       }
-       
+    int dy = Utils.clamp(mouseY - pmouseY, -1, 1);
+    
+    plateRotation.x = Utils.clamp(
+      plateRotation.x + dy * movingVelocity * speed,
+      minAngle, maxAngle
+    );
+    
+    int dx = Utils.clamp(mouseX - pmouseX, -1, 1);
+    
+    plateRotation.z = Utils.clamp(
+      plateRotation.z + dx * movingVelocity * speed,
+      minAngle, maxAngle
+    );
   }
 
 }

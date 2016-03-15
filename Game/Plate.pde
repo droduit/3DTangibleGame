@@ -56,14 +56,13 @@ class Plate {
   }
 
   void mouseDraggedEvent() {
-    int dy = Utils.clamp(mouseY - pmouseY, -1, 1);
+    int dy = -Utils.clamp(mouseY - pmouseY, -1, 1);
+    int dx =  Utils.clamp(mouseX - pmouseX, -1, 1);
     
     rot.x = Utils.clamp(
       rot.x + dy * movingVelocity * speed,
       minAngle, maxAngle
     );
-    
-    int dx = Utils.clamp(mouseX - pmouseX, -1, 1);
     
     rot.z = Utils.clamp(
       rot.z + dx * movingVelocity * speed,

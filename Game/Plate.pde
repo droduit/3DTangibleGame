@@ -20,7 +20,7 @@ class Plate {
   }
   
   void display() {
-    // fill(125, 125, 125);
+    fill(200, 200, 255);
     
     translate(width / 2f, height / 2f, 0f);
     rotateX(rot.x);
@@ -40,8 +40,6 @@ class Plate {
     text("RotationX : "+nf(degrees(rot.x), 0, 1), 0, 15, 0);
     text("RotationZ : "+nf(degrees(rot.z),0,1), 130, 15, 0);
     text("Speed : "+nf(speed,0,1), 250, 15, 0);
-    
-    fill(200, 200, 255);
   }
   
   void mouseWheelEvent(float e) {

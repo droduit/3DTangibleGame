@@ -6,7 +6,8 @@ final PVector plateRotation = new PVector(0F, 0, 0F); // Rotation du plateau
 BallMover ballMover; // === BALLE
 
 void settings() {
-  fullScreen(P3D);
+  //fullScreen(P3D);
+  size(1000, 1000, P3D);
 }
 
 void setup() {
@@ -33,4 +34,5 @@ void mouseWheel(MouseEvent event) {
 
 void mouseDragged() {
     plate.mouseDraggedEvent();
+    ballMover.trigger();
 }

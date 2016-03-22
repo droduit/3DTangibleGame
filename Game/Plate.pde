@@ -60,33 +60,6 @@ class Plate {
     }
   }
   
-  PShape newObstacle() {
-    float cylinderBaseSize = 50;
-    float cylinderHeight = 50;
-    int cylinderResolution = 1550;
-    PShape openCylinder = new PShape();
-      
-    float angle;
-    float[] x = new float[cylinderResolution + 1];
-    float[] y = new float[cylinderResolution + 1];
-    
-    for(int i = 0; i < x.length; i++) {
-      angle = (TWO_PI / cylinderResolution) * i;
-      x[i] = sin(angle) * cylinderBaseSize;
-      y[i] = cos(angle) * cylinderBaseSize;
-    }
-    
-    openCylinder = createShape();
-    openCylinder.beginShape(TRIANGLE_FAN);
-    
-    for(int i = 0; i < x.length; i++) {
-      openCylinder.vertex(x[i], -2*size.y, y[i]);
-      openCylinder.vertex(x[i], -2*size.y+cylinderHeight, y[i]);
-    }
-    openCylinder.endShape();
-    return openCylinder;
-  }
-  
   void shiftMode() {
       isShiftMode = true;
       tmpRot = new PVector(rot.x, rot.y, rot.z);

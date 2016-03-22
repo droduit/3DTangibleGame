@@ -33,8 +33,7 @@ class BallMover {
   }
   
   void display() {
-     // fill(127);
-     translate(p.x, p.y, p.z);
+     translate(p.x, p.y, p.z); 
      sphere(25);
   }
   

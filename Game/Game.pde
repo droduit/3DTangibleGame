@@ -20,7 +20,9 @@ void draw() {
     plate.displayInfo();
     plate.display();
     
-    ballMover.update();
+    if(!plate.isShiftMode) 
+      ballMover.update();
+      
     ballMover.display();
 }
 
@@ -30,5 +32,19 @@ void mouseWheel(MouseEvent event) {
 }
 
 void mouseDragged() {
-    plate.mouseDraggedEvent();
+  plate.mouseDraggedEvent();
+}
+
+void keyPressed() {
+  if(key == CODED) {
+    if(keyCode == SHIFT) 
+       plate.shiftMode();
+  }
+}
+
+void keyReleased() {
+  if(key == CODED) {
+     if(keyCode == SHIFT)
+        plate.releaseShiftMode();
+  }
 }

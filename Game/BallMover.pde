@@ -1,4 +1,6 @@
 class BallMover {
+  private final float BALL_RADIUS = 25;
+  
   // Physic
   private final float normalForce = 1;
   private final float mu = 0.01;
@@ -16,6 +18,7 @@ class BallMover {
     this.v = new PVector(0f, 0f, 0f);
   }
   
+  // Mise à jour de la position de la balle
   public void update() {
     PVector gf = new PVector(sin(plate.rot.z), 0f, -sin(plate.rot.x)); // Force de gravité
     PVector ff = v.copy(); // Force de frottement
@@ -27,14 +30,18 @@ class BallMover {
     this.v.add(a); // On ajoute l'accélération au vecteur vitesse
     
     this.checkEdges(); 
+    this.checkCylinderCollision();
+    
     this.p.add(v); // On ajoute la vitesse au vecteur position
   }
   
+  // Affichage de la balle
   public void display() {
      translate(p.x, p.y, p.z); 
-     sphere(25);
+     sphere(BALL_RADIUS);
   }
   
+  // Vérification des collisions avec les bords du plateau
   private void checkEdges() {
     float ax = e * abs(this.v.x), az = e * abs(this.v.z);
     float maxX = plate.size.x / 2f, maxZ = plate.size.z / 2f;
@@ -46,8 +53,16 @@ class BallMover {
     if (p.z < -maxZ) this.v.z =  1f * az;
   }
   
-  private void checkObstacles() {
-    // TODO
+  // Vérification des collisions avec les obstacles
+  private void checkCylinderCollision() {
+    ArrayList<PVector> obstacles = plate.getObstacles();
+    for(PVector o : obstacles) {
+      PVector n = o.copy().mult(-1).add(p).normalize(); // n = -cylindreCenter + BallCenter
+      PVector v1 = v.copy();
+      PVector v2 = PVector.sub(v1, n.mult(-2).mult(v1.dot(n)));
+      
+      if(p.x == o.x && p.y == o.y) this.v = v2.copy();
+    }
   }
   
 }

@@ -99,7 +99,7 @@ class Plate {
   
   // Ajoute un obstacle sur le plateau
   public void addObstacle() {
-      if(isInPlate(mouseX, mouseY)) {
+      if(isInPlate(mouseX, mouseY) && !isBusyPosition(mouseX, mouseY)) {
         PVector position = new PVector(mouseX-this.size.x, mouseY-this.size.z);
         this.obstacles.add(position);
       }
@@ -108,6 +108,11 @@ class Plate {
   // Indique si la position (x,y) est a l'intérieur du plateau
   public boolean isInPlate(float x, float y) {
     return (x >= plateXMin && x <= plateXMax && y >= plateYMin && y <= plateYMax); 
+  }
+  
+  // Indique si la position est déjà prise par un obstacle (Pas demandé donc pas encore implémenté mais idée d'amélioration!)
+  public boolean isBusyPosition(float x, float y) {
+    return false;
   }
   
   // Retourne les obstacles du plateau

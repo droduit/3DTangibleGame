@@ -1,23 +1,22 @@
 class BallMover {
   // Physic
-  final float g = 9.81;
-  final float normalForce = 1;
-  final float mu = 0.01;
-  final float e = 0.6;
-  final float fm = normalForce * mu;
+  private final float normalForce = 1;
+  private final float mu = 0.01;
+  private final float e = 0.6;
+  private final float fm = normalForce * mu;
   
-  PVector p; // Position de la balle
-  PVector v; // Vitesse de la balle
+  private PVector p; // Position de la balle
+  private PVector v; // Vitesse de la balle
   
-  final Plate plate;
+  private final Plate plate; // Plateau qui contient la balle
   
-  BallMover(Plate plate) {
+  public BallMover(Plate plate) {
     this.plate = plate;
     this.p = new PVector(0f, -plate.size.y - 16f, 0f);
     this.v = new PVector(0f, 0f, 0f);
   }
   
-  void update() {
+  public void update() {
     PVector gf = new PVector(sin(plate.rot.z), 0f, -sin(plate.rot.x));
     PVector ff = v.get();
     
@@ -32,12 +31,12 @@ class BallMover {
     this.p.add(v);
   }
   
-  void display() {
+  public void display() {
      translate(p.x, p.y, p.z); 
      sphere(25);
   }
   
-  void checkEdges() {
+  private void checkEdges() {
     float ax = e * abs(this.v.x), az = e * abs(this.v.z);
     float maxX = plate.size.x / 2f, maxZ = plate.size.z / 2f;
     

@@ -1,18 +1,18 @@
 class Cylinder {
-  float cylinderBaseSize = 30;
-  float cylinderHeight = 90;
-  int cylinderResolution = 40;
+  private float cylinderBaseSize = 30; // Rayon de la base
+  private float cylinderHeight = 90; // Hauteur
+  private int cylinderResolution = 40; // Resolution 
   
-  PShape cylinder = new PShape();
-  PShape body = new PShape();
-  PShape top = new PShape();
-  PShape bottom = new PShape();
+  private PShape cylinder = new PShape(); 
+  private PShape body = new PShape();
+  private PShape top = new PShape();
+  private PShape bottom = new PShape();
+
+  private float[] x = new float[cylinderResolution + 1];
+  private float[] y = new float[cylinderResolution + 1];
   
-  float angle;
-  float[] x = new float[cylinderResolution + 1];
-  float[] y = new float[cylinderResolution + 1];
-  
-  Cylinder() {
+  public Cylinder() {
+    float angle;
     for(int i = 0; i < x.length; i++) {
       angle = (TWO_PI / cylinderResolution) * i;
       x[i] = sin(angle) * cylinderBaseSize;

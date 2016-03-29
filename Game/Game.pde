@@ -18,14 +18,11 @@ void draw() {
     plate.displayInfo();
     plate.display();
     
-    if(!plate.isShiftMode) {
+    if(!plate.isShiftMode()) {
       ballMover.update();
       cursor(ARROW);
     } else {
-      if(plate.isInPlate(mouseX, mouseY))
-        cursor(CROSS);
-       else
-         cursor(ARROW);
+        cursor(plate.isInPlate(mouseX, mouseY) ? CROSS : ARROW);
     }
     
     ballMover.display();
@@ -42,7 +39,7 @@ void mouseDragged() {
 
 void mousePressed() {
   if(mouseButton == LEFT) {
-    if(plate.isShiftMode)
+    if(plate.isShiftMode())
       plate.addObstacle();
   }
 }
@@ -50,13 +47,13 @@ void mousePressed() {
 void keyPressed() {
   if(key == CODED) {
     if(keyCode == SHIFT) 
-       plate.shiftMode();
+       plate.shiftMode(true);
   }
 }
 
 void keyReleased() {
   if(key == CODED) {
      if(keyCode == SHIFT)
-        plate.releaseShiftMode();
+        plate.shiftMode(false);
   }
 }

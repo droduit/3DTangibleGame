@@ -5,7 +5,7 @@ class BallMover {
   private final float normalForce = 1;
   private final float mu = 0.01;
   private final float e = 0.6;
-  private final float fm = normalForce * mu;
+  private final float fm = normalForce * mu; // Friction magnitude
   
   private PVector p; // Position de la balle
   private PVector v; // Vitesse de la balle
@@ -56,12 +56,25 @@ class BallMover {
   // Vérification des collisions avec les obstacles
   private void checkCylinderCollision() {
     ArrayList<PVector> obstacles = plate.getObstacles();
+    PVector v1 = new PVector(v.x, v.z);
+    PVector p2D = new PVector(p.x, p.z);
+    
     for(PVector o : obstacles) {
-      PVector n = o.copy().mult(-1).add(p).normalize(); // n = -cylindreCenter + BallCenter
-      PVector v1 = v.copy();
-      PVector v2 = PVector.sub(v1, n.mult(-2).mult(v1.dot(n)));
-      
-      if(p.x == o.x && p.y == o.y) this.v = v2.copy();
+      if(o.dist(p2D) <= BALL_RADIUS + Cylinder.cylinderBaseSize) {
+        // On met à jour la vitesse
+        PVector n = p2D.copy().sub(o);
+        n.normalize();
+        
+        PVector v2 = PVector.sub(v1, n.mult(2 * v1.copy().dot(n)));
+        this.v = new PVector(v2.x, 0, v2.y);
+        
+        // On empêche la balle de traverser l'obstacle
+        PVector p2Dupd = o.copy();
+        n = p2D.copy().sub(o);
+        n.normalize();
+        p2Dupd.add(n.mult(BALL_RADIUS + Cylinder.cylinderBaseSize));
+        this.p = new PVector(p2Dupd.x, p.y, p2Dupd.y);
+      }
     }
   }
   

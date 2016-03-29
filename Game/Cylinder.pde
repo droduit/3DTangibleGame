@@ -1,7 +1,7 @@
 class Cylinder {
-  private float cylinderBaseSize = 30; // Rayon de la base
-  private float cylinderHeight = 90; // Hauteur
-  private int cylinderResolution = 40; // Resolution 
+  public static final float cylinderBaseSize = 30; // Rayon de la base
+  private final float cylinderHeight = 90; // Hauteur
+  private final int cylinderResolution = 40; // Resolution 
   
   private PShape cylinder = new PShape(); 
   private PShape body = new PShape();

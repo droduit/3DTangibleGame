@@ -1,4 +1,5 @@
 class Plate {
+  PVector pos;
   PVector size; // Taille
   PVector rot; // Rotation
   
@@ -10,27 +11,48 @@ class Plate {
   final float MED_SPEED = PI / 144f;
   final float MAX_SPEED = PI /  96f;
   
+  float plateXMin = 0f;
+  float plateXMax = 0f;
+  float plateYMin = 0f;
+  float plateYMax = 0f;
   
   boolean isShiftMode = false;
-  PVector tmpRot = new PVector(0f, 0f, 0f);
+  PVector tmpRot = new PVector(0f, 0f, 0f); // Stoque le vecteur de rotation lors du SHIFT appuyé
+  ArrayList<PVector> obstacles;
 
   Plate() {
-    this(new PVector(500f, 20f, 500f), new PVector(0f, 0f, 0f));
+    this(new PVector(500f, 20f, 500f), new PVector(0f, 0f, 0f), new PVector(width/2f, height/2f, 0f) );
   }
 
-  Plate(PVector size, PVector rot) {
+  Plate(PVector size, PVector rot, PVector pos) {
+    this.pos = pos;
     this.size = size;
     this.rot = rot;
+    this.obstacles = new ArrayList();
+    
+    plateXMin = pos.x - size.x/2;
+    plateXMax = pos.x + size.x/2;
+    plateYMin = pos.y - size.z/2;
+    plateYMax = pos.y + size.z/2;
+    
+    System.out.println("plate : x : "+pos.x+" - y : "+pos.y);
   }
   
   void display() {
     fill(200, 200, 255);
-    
-    translate(width / 2f, height / 2f, 0f);
+   
+    translate(pos.x, pos.y, pos.z);
     rotateX(rot.x);
     rotateZ(rot.z);
-    
     box(size.x, size.y, size.z);
+    
+    for(PVector cPos : obstacles) {
+      pushMatrix();
+      Cylinder c = new Cylinder();
+      translate(cPos.x, 0, cPos.y);
+      shape(c.get());
+      popMatrix();
+    }
   }
   
   /**
@@ -60,16 +82,29 @@ class Plate {
     }
   }
   
+  // Active le mode d'ajout d'obtacles
   void shiftMode() {
       isShiftMode = true;
       tmpRot = new PVector(rot.x, rot.y, rot.z);
-      
-      rot.x = - PI / 2f;
-      rot.z = 0;
+      rot = new PVector(-PI/2f, 0f, 0f);
   }
   
+  // Désactive le mode d'ajout d'obstacles
   void releaseShiftMode() {
     isShiftMode = false;
     rot = new PVector(tmpRot.x, tmpRot.y, tmpRot.z);
+  }
+  
+  // Ajoute un obstacle sur le plateau
+  void addObstacle() {
+      if(isInPlate(mouseX, mouseY)) {
+        PVector position = new PVector(mouseX-this.size.x, mouseY-this.size.z);
+        this.obstacles.add(position);
+      }
+  }
+  
+  // Indique si la position (x,y) est a l'intérieur du plateau
+  boolean isInPlate(float x, float y) {
+    return (x >= plateXMin && x <= plateXMax && y >= plateYMin && y <= plateYMax); 
   }
 }

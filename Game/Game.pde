@@ -13,16 +13,21 @@ void setup() {
 
 void draw() {
     background(255);
-    
-    //camera(width/2.0, -height/4.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0, height/2.0, 0, 0, 1, 0);
     lights();
     
     plate.displayInfo();
     plate.display();
     
-    if(!plate.isShiftMode) 
+    if(!plate.isShiftMode) {
       ballMover.update();
-      
+      cursor(ARROW);
+    } else {
+      if(plate.isInPlate(mouseX, mouseY))
+        cursor(CROSS);
+       else
+         cursor(ARROW);
+    }
+    
     ballMover.display();
 }
 
@@ -33,6 +38,13 @@ void mouseWheel(MouseEvent event) {
 
 void mouseDragged() {
   plate.mouseDraggedEvent();
+}
+
+void mousePressed() {
+  if(mouseButton == LEFT) {
+    if(plate.isShiftMode)
+      plate.addObstacle();
+  }
 }
 
 void keyPressed() {

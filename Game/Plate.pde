@@ -106,7 +106,12 @@ class Plate {
   }
   
   // Indique si la position (x,y) est a l'intérieur du plateau
-  boolean isInPlate(float x, float y) {
+  public boolean isInPlate(float x, float y) {
     return (x >= plateXMin && x <= plateXMax && y >= plateYMin && y <= plateYMax); 
+  }
+  
+  // Retourne les obstacles du plateau
+  public ArrayList<PVector> getObstacles() {
+    return obstacles;
   }
 }

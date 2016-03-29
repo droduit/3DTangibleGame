@@ -17,18 +17,17 @@ class BallMover {
   }
   
   public void update() {
-    PVector gf = new PVector(sin(plate.rot.z), 0f, -sin(plate.rot.x));
-    PVector ff = v.get();
-    
-    ff.mult(-1);
-    ff.normalize();
+    PVector gf = new PVector(sin(plate.rot.z), 0f, -sin(plate.rot.x)); // Force de gravité
+    PVector ff = v.copy(); // Force de frottement
+    ff.mult(-1); // Multiplie le vecteur par le scalaire -1
+    ff.normalize(); 
     ff.mult(fm);
     
-    PVector a = gf.add(ff);
-    this.v.add(a);
+    PVector a = gf.add(ff); // Accélération = Force de gravité + frottement
+    this.v.add(a); // On ajoute l'accélération au vecteur vitesse
     
-    this.checkEdges();
-    this.p.add(v);
+    this.checkEdges(); 
+    this.p.add(v); // On ajoute la vitesse au vecteur position
   }
   
   public void display() {
@@ -45,6 +44,10 @@ class BallMover {
     
     if (p.z >  maxZ) this.v.z = -1f * az;
     if (p.z < -maxZ) this.v.z =  1f * az;
+  }
+  
+  private void checkObstacles() {
+    // TODO
   }
   
 }

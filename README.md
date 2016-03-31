@@ -1,4 +1,7 @@
 # Visual Computing Project @ EPFL
+
+<p><img src="http://dominique.leroduit.com/game.jpg" /></p>
+
 <b>Group :</b> H
 <p><b>Contributors :</b></p>
 

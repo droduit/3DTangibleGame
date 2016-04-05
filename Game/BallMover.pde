@@ -52,6 +52,9 @@ class BallMover {
     
     if (p.z >  maxZ) this.v.z = -1f * az;
     if (p.z < -maxZ) this.v.z =  1f * az;
+    
+    this.p.x = Utils.clamp(this.p.x, -maxX, maxX);
+    this.p.z = Utils.clamp(this.p.z, -maxZ, maxZ);
   }
   
   // Vérification des collisions avec les obstacles
@@ -61,22 +64,22 @@ class BallMover {
     PVector p2D = new PVector(p.x, p.z);
     
     for(PVector o : obstacles) {
-      if(o.dist(p2D) <= BALL_RADIUS + Cylinder.cylinderBaseSize) {
+      if(o.dist(p2D) <= BALL_RADIUS + Cylinder.baseSize) {
         // On met à jour la vitesse
         PVector n = p2D.copy().sub(o);
         n.normalize();
         
         PVector v2 = PVector.sub(v1, n.mult(2 * v1.copy().dot(n)));
         this.v = new PVector(v2.x, 0, v2.y);
+        this.v.mult(e);
         
         // On empêche la balle de traverser l'obstacle
         PVector p2Dupd = o.copy();
         n = p2D.copy().sub(o);
         n.normalize();
-        p2Dupd.add(n.mult(BALL_RADIUS + Cylinder.cylinderBaseSize));
+        p2Dupd.add(n.mult(BALL_RADIUS + Cylinder.baseSize));
         this.p = new PVector(p2Dupd.x, p.y, p2Dupd.y);
       }
     }
   }
-  
 }

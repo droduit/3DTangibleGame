@@ -22,6 +22,9 @@ class BuildState extends State {
   }
   
   @Override
+  public void onUpdate(float dt) {}
+  
+  @Override
   public void mousePressed() {
     if (mouseButton == LEFT)
       plate.addObstacle();

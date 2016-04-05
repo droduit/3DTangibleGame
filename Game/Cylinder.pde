@@ -1,22 +1,22 @@
 class Cylinder {
-  public static final float cylinderBaseSize = 30; // Rayon de la base
-  private final float cylinderHeight = 90; // Hauteur
-  private final int cylinderResolution = 40; // Resolution 
+  public static final float baseSize = 30; // Rayon de la base
+  private final float height = 90; // Hauteur
+  private final int resolution = 40; // Resolution 
   
   private PShape cylinder = new PShape(); 
   private PShape body = new PShape();
   private PShape top = new PShape();
   private PShape bottom = new PShape();
 
-  private float[] x = new float[cylinderResolution + 1];
-  private float[] y = new float[cylinderResolution + 1];
+  private float[] x = new float[resolution + 1];
+  private float[] y = new float[resolution + 1];
   
   public Cylinder() {
     float angle;
     for(int i = 0; i < x.length; i++) {
-      angle = (TWO_PI / cylinderResolution) * i;
-      x[i] = sin(angle) * cylinderBaseSize;
-      y[i] = cos(angle) * cylinderBaseSize;
+      angle = (TWO_PI / resolution) * i;
+      x[i] = sin(angle) * baseSize;
+      y[i] = cos(angle) * baseSize;
     } 
   }
   
@@ -27,7 +27,7 @@ class Cylinder {
     // Dessine les bords du cyclindre
     for(int i = 0; i < x.length; i++) {
       body.vertex(x[i], 0, y[i]);
-      body.vertex(x[i], -cylinderHeight, y[i]);
+      body.vertex(x[i], -height, y[i]);
     }
     body.endShape(CLOSE);
     return body;
@@ -38,7 +38,7 @@ class Cylinder {
     top = createShape();
     top.beginShape(TRIANGLE_FAN);
     for(int i = 0; i < x.length; i++) {
-        top.vertex(x[i], -cylinderHeight, y[i]);    
+        top.vertex(x[i], -height, y[i]);    
     }
     top.endShape(CLOSE);
     return top;

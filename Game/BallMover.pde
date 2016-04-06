@@ -15,7 +15,7 @@ class BallMover {
   
   public BallMover(Plate plate) {
     this.plate = plate;
-    this.p = new PVector(0f, -plate.size.y - 16f, 0f);
+    this.p = new PVector(0f, -plate.size.y - BALL_RADIUS + 10f, 0f);
     this.v = new PVector(0f, 0f, 0f);
   }
   

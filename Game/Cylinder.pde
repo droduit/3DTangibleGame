@@ -49,7 +49,7 @@ class Cylinder {
     cylinder.addChild(top);
     cylinder.addChild(bottom);
     cylinder.addChild(body);
-   // cylinder.setFill(color(146,154,204));
+    cylinder.setFill(color(146,154,204));
      
     return cylinder;
   }

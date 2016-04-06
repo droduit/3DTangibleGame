@@ -39,6 +39,13 @@ class Plate {
     plateYMax = pos.y + size.z/2;
   }
   
+  public PVector position() { return this.pos; }
+  public void position(PVector pos) { this.pos = pos; }
+  public PVector size() { return this.size; }
+  public void size(PVector size) { this.size = size; }
+  public PVector rotation() { return this.rot; }
+  public void rotation(PVector rot) { this.rot = rot; }
+  
   public void display() {
     fill(200, 200, 255);
    

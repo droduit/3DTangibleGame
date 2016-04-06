@@ -7,11 +7,17 @@ class Cylinder {
   private PShape body = new PShape();
   private PShape top = new PShape();
   private PShape bottom = new PShape();
+  
+  private final color bg = color(146,154,204);
 
-  private float[] x = new float[resolution + 1];
-  private float[] y = new float[resolution + 1];
+  private final float[] x;
+  private final float[] y;
   
   public Cylinder() {
+    
+    x = new float[resolution + 1];
+    y = new float[resolution + 1];
+  
     float angle;
     for(int i = 0; i < x.length; i++) {
       angle = (TWO_PI / resolution) * i;
@@ -49,7 +55,7 @@ class Cylinder {
     cylinder.addChild(top);
     cylinder.addChild(bottom);
     cylinder.addChild(body);
-    cylinder.setFill(color(146,154,204));
+    cylinder.setFill(bg);
      
     return cylinder;
   }

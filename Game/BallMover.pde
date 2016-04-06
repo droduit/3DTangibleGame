@@ -43,7 +43,7 @@ class BallMover {
   // Vérification des collisions avec les bords du plateau
   private void checkEdges() {
     float ax = e * abs(this.v.x), az = e * abs(this.v.z);
-    float maxX = plate.size.x / 2f, maxZ = plate.size.z / 2f;
+    float maxX = (plate.size.x - BALL_RADIUS) / 2f, maxZ = (plate.size.z - BALL_RADIUS) / 2f;
     
     if (p.x >  maxX) this.v.x = -1f * ax;
     if (p.x < -maxX) this.v.x =  1f * ax;
@@ -79,5 +79,10 @@ class BallMover {
         this.p = new PVector(p2Dupd.x, p.y, p2Dupd.y);
       }
     }
+  }
+  
+  // Retourne la position de la balle
+  public PVector getPosition() {
+     return p; 
   }
 }

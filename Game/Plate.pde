@@ -10,6 +10,7 @@ class Plate {
   private final float MIN_SPEED = PI / 720f;
   private final float MED_SPEED = PI / 144f;
   private final float MAX_SPEED = PI /  96f;
+  private float speed = 0F; // Vitesse affichée
   
   // Positions des bords du plateau
   private float plateXMin = 0f;
@@ -61,6 +62,8 @@ class Plate {
       shape(cylinderShape);
       popMatrix();
     }
+    
+    speed = va / MED_SPEED;
   }
   
   // Affiche les informations speed, rotationX,Y en haut de la fenetre
@@ -68,7 +71,6 @@ class Plate {
     fill(0, 0, 0);
     textSize(12);
     
-    float speed = va / MED_SPEED;
     text("RotationX : "+nf(degrees(rot.x), 0, 1), 0, 15, 0);
     text("RotationZ : "+nf(degrees(rot.z),0,1), 130, 15, 0);
     text("Speed : "+nf(speed,0,1), 250, 15, 0);
@@ -109,5 +111,10 @@ class Plate {
   // Retourne les obstacles du plateau
   public ArrayList<PVector> getObstacles() {
     return obstacles;
+  }
+  
+  // Retourne la vitesse de la balle
+  public float getSpeed() {
+    return speed; 
   }
 }

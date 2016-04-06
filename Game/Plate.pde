@@ -54,9 +54,9 @@ class Plate {
     rotateZ(rot.z);
     box(size.x, size.y, size.z);
     
+    Cylinder c = new Cylinder();
     for(PVector cPos : obstacles) {
       pushMatrix();
-      Cylinder c = new Cylinder();
       translate(cPos.x, 0, cPos.y);
       shape(c.get());
       popMatrix();

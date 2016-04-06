@@ -20,49 +20,39 @@ class Cylinder {
     } 
   }
   
-  // Créé le manteau du cylindre
-  private PShape body() {
+  // Retourne le cylindre créé à partir des 3 composantes body, top, bottom
+  private PShape get() {
     body = createShape();
     body.beginShape(QUAD_STRIP); 
+    
+    top = createShape();
+    top.beginShape(TRIANGLE_FAN);
+    
+    bottom = createShape();
+    bottom.beginShape(TRIANGLE_FAN);
+    
     // Dessine les bords du cyclindre
     for(int i = 0; i < x.length; i++) {
       body.vertex(x[i], 0, y[i]);
       body.vertex(x[i], -height, y[i]);
-    }
-    body.endShape(CLOSE);
-    return body;
-  }
-  
-  // Créé le dessus du cylindre
-  private PShape top() {
-    top = createShape();
-    top.beginShape(TRIANGLE_FAN);
-    for(int i = 0; i < x.length; i++) {
-        top.vertex(x[i], -height, y[i]);    
-    }
-    top.endShape(CLOSE);
-    return top;
-  }
-  
-  // Créé le dessous du cylindre
-  private PShape bottom() {
-    bottom = createShape();
-    bottom.beginShape(TRIANGLE_FAN);
-    for (int i = 0; i < x.length; i++) {
+      
+      top.vertex(x[i], -height, y[i]);   
+      
       bottom.vertex(x[i], 0, y[i]);
     }
+    
+    body.endShape(CLOSE);
+    top.endShape(CLOSE);
     bottom.endShape(CLOSE);
-    return bottom;
+
+    cylinder = createShape(GROUP);
+    cylinder.addChild(top);
+    cylinder.addChild(bottom);
+    cylinder.addChild(body);
+   // cylinder.setFill(color(146,154,204));
+     
+    return cylinder;
   }
-  
-  // Retourne le cylindre créé à partir des 3 composantes body, top, bottom
-  public PShape get() {
-     cylinder = createShape(GROUP);
-     cylinder.addChild(top());
-     cylinder.addChild(bottom());
-     cylinder.addChild(body());
-     cylinder.setFill(color(146,154,204));
-     return cylinder;
-  }
+
 
 }

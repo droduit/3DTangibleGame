@@ -33,10 +33,11 @@ class Cylinder {
     
     top = createShape();
     top.beginShape(TRIANGLE_FAN);
+    top.vertex(0, -height, 0);
     
     bottom = createShape();
     bottom.beginShape(TRIANGLE_FAN);
-    
+    bottom.vertex(0,0,0);
     // Dessine les bords du cyclindre
     for(int i = 0; i < x.length; i++) {
       body.vertex(x[i], 0, y[i]);

@@ -91,7 +91,7 @@ class Plate {
   // Ajoute un obstacle sur le plateau
   public void addObstacle() {
       if(isInPlate(mouseX, mouseY) && !isBusyPosition(mouseX, mouseY)) {
-        PVector position = new PVector(mouseX-this.size.x, mouseY-this.size.z);
+        PVector position = new PVector(mouseX-this.pos.x, mouseY-this.pos.y);
         this.obstacles.add(position);
       }
   }

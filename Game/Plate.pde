@@ -18,7 +18,6 @@ class Plate {
   private float plateYMax = 0f;
   
   private boolean isShiftMode = false; // true : Mode Shift activé
-  private PVector tmpRot = new PVector(0f, 0f, 0f); // Stoque le vecteur de rotation lors du SHIFT appuyé
   private ArrayList<PVector> obstacles; // Obstacles sur le plateau
   
   private PShape cylinderShape = new Cylinder().get();

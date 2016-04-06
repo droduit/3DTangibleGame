@@ -23,8 +23,7 @@ class BallMover {
   public void update(float dt) {
     PVector gf = new PVector(g * sin(plate.rot.z), 0f, g * -sin(plate.rot.x)); // Force de gravité
     PVector ff = v.copy(); // Force de frottement
-    ff.normalize(); 
-    ff.mult(-1F * fm); // Multiplie le vecteur par le scalaire -1 * fm
+    ff.normalize().mult(-1F * fm); 
     
     PVector a = gf.add(ff).mult(dt); // Accélération = Force de gravité + frottement
     this.v.add(a); // On ajoute l'accélération au vecteur vitesse

@@ -3,22 +3,15 @@ class BuildState extends State {
   private final boolean isPopup = false;
   
   @Override
-  public void onFocus() {
-    plate.shiftMode(true);
-  }
-  
-  @Override
   public void onDraw() {
     cursor(ARROW);
     
-    pushMatrix();
-    
+    defaultCamera();
     plate.displayInfo();
+    
+    aboveCamera();
     plate.display();
-    
     ballMover.display();
-    
-    popMatrix();
   }
   
   @Override

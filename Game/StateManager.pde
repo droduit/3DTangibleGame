@@ -59,7 +59,9 @@ class StateManager {
       drawIndex = drawIndex - 1;
       
     while (drawIndex < this.stateStack.size()) {
-      stateStack.get(drawIndex).onDraw();
+      pushMatrix();
+        stateStack.get(drawIndex).onDraw();
+      popMatrix();
       
       drawIndex = drawIndex + 1;
     }

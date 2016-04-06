@@ -3,11 +3,6 @@ class PlayState extends State {
   private final boolean isPopup = false;
 
   @Override
-  public void onFocus() {
-    plate.shiftMode(false);
-  }
-
-  @Override
   public void onUpdate(float dt) {
     ballMover.update(dt);
   }
@@ -16,14 +11,14 @@ class PlayState extends State {
   public void onDraw() {
     cursor(ARROW);
     
-    pushMatrix();
-    
+    defaultCamera();
     plate.displayInfo();
+    
+    if (keyPressed && keyCode == CONTROL)
+      aboveCamera();
+      
     plate.display();
-    
     ballMover.display();
-    
-    popMatrix();
   }
   
   @Override

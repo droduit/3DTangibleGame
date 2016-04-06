@@ -81,22 +81,6 @@ class Plate {
     }
   }
   
-  // Active/Désactive le mode d'ajout d'obtacles selon la valeur du paramètre
-  public void shiftMode(boolean on) {
-      if(on) { // Active le mode SHIFT
-        isShiftMode = true;
-        tmpRot = new PVector(rot.x, rot.y, rot.z);
-        rot = new PVector(-PI/2f, 0f, 0f);
-      } else { // Désactive le mode SHIFT
-        isShiftMode = false;
-        rot = new PVector(tmpRot.x, tmpRot.y, tmpRot.z);
-      }
-  } 
-  // Indique si on est en mode ajout d'obstacle ou non
-  public boolean isShiftMode() {
-     return isShiftMode; 
-  }
-  
   // Ajoute un obstacle sur le plateau
   public void addObstacle() {
       if(isInPlate(mouseX, mouseY) && !isBusyPosition(mouseX, mouseY)) {

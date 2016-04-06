@@ -1,3 +1,6 @@
+final int SCREEN_WIDTH = 1000;
+final int SCREEN_HEIGHT = 1000;
+
 StateManager stateManager = new StateManager();
 
 // Settings doit avoir été exécuté avant d'instancer plate et ballMover
@@ -7,7 +10,7 @@ BallMover ballMover = null;
 int lastTick = 0;
 
 void settings() {
-  size(1000, 1000, P3D);
+  size(SCREEN_WIDTH, SCREEN_HEIGHT, P3D);
 }
 
 void setup() {
@@ -15,7 +18,7 @@ void setup() {
   plate = new Plate(
     new PVector(500f, 20f, 500f),
     new PVector(0f, 0f, 0f),
-    new PVector(1000/2f, 1000/2f, 0f)
+    new PVector(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, 0f)
   );
   ballMover = new BallMover(plate);
   stateManager.push(new PlayState());

@@ -2,9 +2,10 @@ class BallMover {
   private final float BALL_RADIUS = 25F;
   
   // Physic
-  private final float g = 9.81F;
+ // private final float g = 9.81F;
+  private final float gMag = 0.4;
   private final float normalForce = 1F;
-  private final float mu = 0.01F;
+  private final float mu = 0.03F;
   private final float e = 0.6F;
   private final float fm = normalForce * mu; // Friction magnitude
   
@@ -21,6 +22,7 @@ class BallMover {
   
   // Mise à jour de la position de la balle
   public void update(float dt) {
+    /*
     PVector gf = new PVector(g * sin(plate.rot.z), 0f, g * -sin(plate.rot.x)); // Force de gravité
     PVector ff = v.copy(); // Force de frottement
     ff.normalize().mult(-1F * fm); 
@@ -32,6 +34,18 @@ class BallMover {
     this.v.add(a); // On ajoute l'accélération au vecteur vitesse
     
     this.p.add(v); // On ajoute la vitesse au vecteur position
+    */
+    
+    this.v.x += sin(plate.rot.z) * gMag;
+    this.v.z -= sin(plate.rot.x) * gMag;
+    
+    PVector ff = this.v.copy().normalize().mult(-fm);
+    
+    this.v.add(ff);
+    this.p.add(v);
+    
+    checkCylinderCollision();
+    checkEdges();
   }
   
   // Affichage de la balle
@@ -52,33 +66,35 @@ class BallMover {
     if (p.z < -maxZ) this.v.z =  1f * az;
     
     this.p.x = Utils.clamp(this.p.x, -maxX, maxX);
-    this.p.z = Utils.clamp(this.p.z, -maxZ, maxZ);   
+    this.p.z = Utils.clamp(this.p.z, -maxZ, maxZ);
   }
   
   // Vérification des collisions avec les obstacles
-  private void checkCylinderCollision() {
+  private boolean checkCylinderCollision() {
     ArrayList<PVector> obstacles = plate.getObstacles();
     PVector v1 = new PVector(v.x, v.z);
     PVector p2D = new PVector(p.x, p.z);
     
+    boolean collision = false;
     for(PVector o : obstacles) {
       if(o.dist(p2D) <= BALL_RADIUS + Cylinder.baseSize) {
         // On met à jour la vitesse
-        PVector n = p2D.copy().sub(o);
-        n.normalize();
-        
-        PVector v2 = PVector.sub(v1, n.mult(2 * v1.copy().dot(n)));
-        this.v = new PVector(v2.x, 0, v2.y);
-        this.v.mult(e);
+        PVector n = p2D.copy().sub(o).normalize();
+
+        v1.sub(n.mult(2 * v1.copy().dot(n)));
+        this.v = new PVector(v1.x, 0, v1.y);
+        //this.v.mult(e);
         
         // On empêche la balle de traverser l'obstacle
         PVector p2Dupd = o.copy();
-        n = p2D.copy().sub(o);
-        n.normalize();
+        n = p2D.copy().sub(o).normalize();
         p2Dupd.add(n.mult(BALL_RADIUS + Cylinder.baseSize));
-        this.p = new PVector(p2Dupd.x, p.y, p2Dupd.y);
+        this.p = new PVector(p2Dupd.x, this.p.y, p2Dupd.y);
+        
+        collision = true;
       }
     }
+    return collision;
   }
   
   // Retourne la position de la balle

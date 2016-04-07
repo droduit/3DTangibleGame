@@ -25,11 +25,11 @@ class BallMover {
     PVector ff = v.copy(); // Force de frottement
     ff.normalize().mult(-1F * fm); 
     
-    PVector a = gf.add(ff).mult(dt); // Accélération = Force de gravité + frottement
-    this.v.add(a); // On ajoute l'accélération au vecteur vitesse
-    
     this.checkCylinderCollision();
     this.checkEdges();
+    
+    PVector a = gf.add(ff).mult(dt); // Accélération = Force de gravité + frottement
+    this.v.add(a); // On ajoute l'accélération au vecteur vitesse
     
     this.p.add(v); // On ajoute la vitesse au vecteur position
   }
@@ -52,7 +52,7 @@ class BallMover {
     if (p.z < -maxZ) this.v.z =  1f * az;
     
     this.p.x = Utils.clamp(this.p.x, -maxX, maxX);
-    this.p.z = Utils.clamp(this.p.z, -maxZ, maxZ);
+    this.p.z = Utils.clamp(this.p.z, -maxZ, maxZ);   
   }
   
   // Vérification des collisions avec les obstacles

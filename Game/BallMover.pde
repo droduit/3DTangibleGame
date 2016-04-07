@@ -2,8 +2,7 @@ class BallMover {
   private final float BALL_RADIUS = 25F;
   
   // Physic
- // private final float g = 9.81F;
-  private final float gMag = 0.4;
+  private final float g = 9.81F;
   private final float normalForce = 1F;
   private final float mu = 0.03F;
   private final float e = 0.6F;
@@ -22,9 +21,9 @@ class BallMover {
   
   // Mise à jour de la position de la balle
   public void update(float dt) {
-    /*
+
     PVector gf = new PVector(g * sin(plate.rot.z), 0f, g * -sin(plate.rot.x)); // Force de gravité
-    PVector ff = v.copy(); // Force de frottement
+    PVector ff = v.copy();
     ff.normalize().mult(-1F * fm); 
     
     this.checkCylinderCollision();
@@ -34,18 +33,6 @@ class BallMover {
     this.v.add(a); // On ajoute l'accélération au vecteur vitesse
     
     this.p.add(v); // On ajoute la vitesse au vecteur position
-    */
-    
-    this.v.x += sin(plate.rot.z) * gMag;
-    this.v.z -= sin(plate.rot.x) * gMag;
-    
-    PVector ff = this.v.copy().normalize().mult(-fm);
-    
-    this.v.add(ff);
-    this.p.add(v);
-    
-    checkCylinderCollision();
-    checkEdges();
   }
   
   // Affichage de la balle
@@ -83,7 +70,7 @@ class BallMover {
 
         v1.sub(n.mult(2 * v1.copy().dot(n)));
         this.v = new PVector(v1.x, 0, v1.y);
-        //this.v.mult(e);
+        this.v.mult(e);
         
         // On empêche la balle de traverser l'obstacle
         PVector p2Dupd = o.copy();

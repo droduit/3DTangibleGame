@@ -3,11 +3,16 @@ class BuildState extends State {
   private final boolean isPopup = false;
   
   private PVector plateRotation = null;
+  private PShape ghostCylinder = null;
+  private color validPosColor = color(50, 200, 50, 100);
+  private color invalidPosColor = color(200, 50, 50, 100);
   
   @Override
   public void onLoad() {
     plateRotation = plate.rotation();
     plate.rotation(new PVector(0f, 0f, 0f));
+
+    ghostCylinder = new Cylinder().getShape();
   }
   
   @Override
@@ -24,6 +29,17 @@ class BuildState extends State {
     
     aboveCamera();
     plate.display();
+
+    if (plate.isValidObstaclePosition(mouseX, mouseY))
+      ghostCylinder.setFill(validPosColor);
+    else
+      ghostCylinder.setFill(invalidPosColor);
+
+    pushMatrix();
+    translate(mouseX - plate.pos.x, 0, mouseY - plate.pos.y);
+    shape(ghostCylinder);
+    popMatrix();
+    
     ballMover.display();
   }
   

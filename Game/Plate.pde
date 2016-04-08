@@ -56,7 +56,7 @@ class Plate {
     
     for(PVector cPos : obstacles) {
       pushMatrix();
-      translate(cPos.x, 0, cPos.y);
+      translate(cPos.x, 0f, cPos.y);
       shape(CYLINDER.getShape());
       popMatrix();
     }
@@ -90,10 +90,9 @@ class Plate {
   
   // Ajoute un obstacle sur le plateau
   public void addObstacle() {
-      if(isInPlate(mouseX, mouseY) && !isBusyPosition(mouseX, mouseY)) {
-        PVector position = new PVector(mouseX-this.pos.x, mouseY-this.pos.y);
-        this.obstacles.add(position);
-      }
+      if (isValidObstaclePosition(mouseX, mouseY))
+        this.obstacles.add(
+          new PVector(mouseX - this.pos.x, mouseY - this.pos.y));
   }
   
   // Indique si la position (x,y) est a l'intérieur du plateau
@@ -103,7 +102,21 @@ class Plate {
   
   // Indique si la position est déjà prise par un obstacle (Pas demandé donc pas encore implémenté mais idée d'amélioration!)
   public boolean isBusyPosition(float x, float y) {
+    float busyRadius = 4 * CYLINDER.radius * CYLINDER.radius;
+
+    for (PVector obstacle : obstacles) {
+      float dx = obstacle.x - x + pos.x,
+            dy = obstacle.y - y + pos.y;
+
+      if (dx * dx + dy * dy <= busyRadius)
+        return true;
+    }
+
     return false;
+  }
+
+  public boolean isValidObstaclePosition(float x, float y) {
+    return isInPlate(x, y) && !isBusyPosition(x, y);
   }
   
   // Retourne les obstacles du plateau

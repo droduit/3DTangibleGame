@@ -58,13 +58,14 @@ class BallMover {
   
   // Vérification des collisions avec les obstacles
   private boolean checkCylinderCollision() {
+    ArrayList<PVector> newPositions = new ArrayList<PVector>();
     ArrayList<PVector> obstacles = plate.getObstacles();
     PVector v1 = new PVector(v.x, v.z);
     PVector p2D = new PVector(p.x, p.z);
     
     boolean collision = false;
     for(PVector o : obstacles) {
-      if(o.dist(p2D) <= BALL_RADIUS + Cylinder.baseSize) {
+      if(o.dist(p2D) <= BALL_RADIUS + CYLINDER.radius) {
         // On met à jour la vitesse
         PVector n = p2D.copy().sub(o).normalize();
 
@@ -75,12 +76,22 @@ class BallMover {
         // On empêche la balle de traverser l'obstacle
         PVector p2Dupd = o.copy();
         n = p2D.copy().sub(o).normalize();
-        p2Dupd.add(n.mult(BALL_RADIUS + Cylinder.baseSize));
-        this.p = new PVector(p2Dupd.x, this.p.y, p2Dupd.y);
+        p2Dupd.add(n.mult(BALL_RADIUS + CYLINDER.radius));
+        newPositions.add(new PVector(p2Dupd.x, this.p.y, p2Dupd.y));
         
         collision = true;
       }
     }
+    
+    if (collision) {
+      PVector finalVector = new PVector();
+      
+      for (PVector pos : newPositions)
+        finalVector.add(pos);
+        
+      this.p = finalVector.mult(1f / newPositions.size());
+    }
+    
     return collision;
   }
   

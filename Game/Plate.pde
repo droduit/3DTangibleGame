@@ -20,8 +20,6 @@ class Plate {
   
   private boolean isShiftMode = false; // true : Mode Shift activé
   private ArrayList<PVector> obstacles; // Obstacles sur le plateau
-  
-  private PShape cylinderShape = new Cylinder().get();
 
   public Plate() {
     this(new PVector(500f, 20f, 500f));
@@ -59,7 +57,7 @@ class Plate {
     for(PVector cPos : obstacles) {
       pushMatrix();
       translate(cPos.x, 0, cPos.y);
-      shape(cylinderShape);
+      shape(CYLINDER.getShape());
       popMatrix();
     }
     

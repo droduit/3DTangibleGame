@@ -1,65 +1,60 @@
+final Cylinder CYLINDER = new Cylinder();
+
 class Cylinder {
-  public static final float baseSize = 25; // Rayon de la base
-  private final float height = 80; // Hauteur
-  private final int resolution = 40; // Resolution 
-  
-  private PShape cylinder = new PShape(); 
-  private PShape body = new PShape();
-  private PShape top = new PShape();
-  private PShape bottom = new PShape();
-  
-  private final color bg = color(146,154,204);
+  private PShape shape = null;
 
-  private final float[] x;
-  private final float[] y;
-  
-  public Cylinder() {
-    
-    x = new float[resolution + 1];
-    y = new float[resolution + 1];
-  
-    float angle;
-    for(int i = 0; i < x.length; i++) {
-      angle = (TWO_PI / resolution) * i;
-      x[i] = sin(angle) * baseSize;
-      y[i] = cos(angle) * baseSize;
-    } 
+  final float radius;
+  final float height;
+  final int resolution;
+  final color fillColor;
+
+  Cylinder() { this(25, 80, 40, color(146, 154, 204)); }
+  Cylinder(float radius, float height, int resolution, color fillColor) {
+    this.radius = radius;
+    this.height = height;
+    this.resolution = resolution;
+    this.fillColor = fillColor;
   }
   
-  // Retourne le cylindre créé à partir des 3 composantes body, top, bottom
-  private PShape get() {
-    body = createShape();
-    body.beginShape(QUAD_STRIP); 
-    
-    top = createShape();
-    top.beginShape(TRIANGLE_FAN);
-    top.vertex(0, -height, 0);
-    
-    bottom = createShape();
-    bottom.beginShape(TRIANGLE_FAN);
-    bottom.vertex(0,0,0);
-    // Dessine les bords du cyclindre
-    for(int i = 0; i < x.length; i++) {
-      body.vertex(x[i], 0, y[i]);
-      body.vertex(x[i], -height, y[i]);
-      
-      top.vertex(x[i], -height, y[i]);   
-      
-      bottom.vertex(x[i], 0, y[i]);
+  PShape getShape() {
+    if (shape == null) {
+        PShape body = createShape();
+        body.beginShape(QUAD_STRIP);
+        
+        PShape top = createShape();
+        top.beginShape(TRIANGLE_FAN);
+        top.vertex(0, -height, 0);
+        
+        PShape bottom = createShape();
+        bottom.beginShape(TRIANGLE_FAN);
+        bottom.vertex(0,0,0);
+
+        // Dessine les bords du cyclindre
+        float da = TWO_PI / resolution;
+        for (int i = 0; i <= resolution; i++) {
+          float angle = i * da;
+          float x = cos(angle) * radius,
+                y = sin(angle) * radius;
+
+          body.vertex(x, 0, y);
+          body.vertex(x, -height, y);
+          
+          top.vertex(x, -height, y);
+          
+          bottom.vertex(x, 0, y);
+        }
+        
+        bottom.endShape(CLOSE);
+        top.endShape(CLOSE);
+        body.endShape(CLOSE);
+
+        shape = createShape(GROUP);
+        shape.addChild(top);
+        shape.addChild(bottom);
+        shape.addChild(body);
+        shape.setFill(fillColor);
     }
-    
-    body.endShape(CLOSE);
-    top.endShape(CLOSE);
-    bottom.endShape(CLOSE);
-
-    cylinder = createShape(GROUP);
-    cylinder.addChild(top);
-    cylinder.addChild(bottom);
-    cylinder.addChild(body);
-    cylinder.setFill(bg);
      
-    return cylinder;
+    return shape;
   }
-
-
 }

@@ -14,6 +14,8 @@ class PlayState extends State {
     defaultCamera();
     plate.displayInfo();
     
+    statsView.drawAll();
+    
     if (keyPressed && keyCode == CONTROL)
       aboveCamera();
       

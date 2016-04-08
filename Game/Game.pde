@@ -6,6 +6,7 @@ StateManager stateManager = new StateManager();
 // Settings doit avoir été exécuté avant d'instancer plate et ballMover
 Plate plate = null;
 BallMover ballMover = null;
+StatsView statsView = null;
 
 int lastTick = 0;
 
@@ -22,6 +23,7 @@ void setup() {
   );
   ballMover = new BallMover(plate);
   stateManager.push(new PlayState());
+  statsView = new StatsView(plate, ballMover);
 }
 
 void draw() {

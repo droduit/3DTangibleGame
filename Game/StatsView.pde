@@ -159,7 +159,7 @@ class StatsView {
      // Largeur d'un carré de la bar char
      sqWidth = sqDefaultSize * (0.5 + objScrollBar.getPos());
 
-     // Si le total des bar peut etre entierement contenu dans la zone dédiée à la bar chart
+     // Si le total des bars peut etre entierement contenu dans la zone dédiée à la bar chart
      if ( floor(scores.size() * sqWidth) <= bcSize.x) {
         // On affiche les scores du plus ancien au plus actuel
         for (int i = 0; i < floor(bcSize.x/sqWidth); i++) {
@@ -198,8 +198,7 @@ class StatsView {
        image(topView, margin/2, bgPosY+margin/2);
        image(scoreBoard, sbPos.x, bgPosY+sbPos.y);
        image(barChart, bcPos.x, bcPos.y);
-       image(scrollBar, bcPos.x, bcPos.y+bcSize.y);
-     
+       image(scrollBar, bcPos.x, bcPos.y+bcSize.y); 
   }
   
   /**

@@ -67,7 +67,7 @@ class StatsView {
     // Balle
     topView.fill(ballColor);
     PVector ballPos = ballMover.getPosition().copy();
-    float ballRadius = BALL_RADIUS * ratio;
+    float ballRadius = BALL_RADIUS * ratio ;
     float posX = mapFromPlateToTopView(ballPos.x, 0, 'x');
     float posZ = mapFromPlateToTopView(ballPos.z, 0, 'z');
     topView.ellipse(posX, posZ, ballRadius, ballRadius);
@@ -75,10 +75,10 @@ class StatsView {
     // Obstacles
     topView.fill(obstaclesColor);
     float oPosX, oPosY, oSize;
-    oSize = CYLINDER.radius*2 * ratio;
+    oSize = CYLINDER.radius * ratio * 2f;
     for(PVector o : plate.getObstacles()) {
-      oPosX = mapFromPlateToTopView(o.x, oSize, 'x'); 
-      oPosY = mapFromPlateToTopView(o.y, oSize, 'z');
+      oPosX = mapFromPlateToTopView(o.x, 0, 'x'); 
+      oPosY = mapFromPlateToTopView(o.y, 0, 'z');
     
       topView.ellipse(oPosX, oPosY, oSize, oSize);
     }
@@ -106,7 +106,7 @@ class StatsView {
          scoreBoard.fill(color(0,0,0));
          text(
             "Total score :\n" + numberFormat.format(totalScore) + "\n\n" +
-            "Velocity :\n" + numberFormat.format(ballMover.getVelocity().mag()) + "\n\n" +
+            "Velocity :\n" + numberFormat.format(ballVelocity().mag()) + "\n\n" +
             "Last score :\n" + numberFormat.format(lastScore)
          , 0, 0);
          scoreBoard.endDraw();
@@ -125,10 +125,23 @@ class StatsView {
      popMatrix();
   }
   
+  /**
+  * @param type Type de score (e = edge, o = obstacle)
+  **/
+  public void addScore(char type) {
+    float v = ballVelocity().mag();
+    this.lastScore = (type=='e') ? -v : v;
+    this.totalScore += lastScore;
+    this.totalScore = max(0, totalScore);
+  }
   
-  public void addScore(float v) {
-    this.lastScore = v;
-    this.totalScore += max(0, lastScore);
+  public PVector ballVelocity() {
+     PVector v = ballMover.getVelocity();
+     PVector formattedVelocity = v.copy();
+     if(v.mag() < 0.32f)
+       formattedVelocity = new PVector(0f, 0f, 0f);
+       
+     return formattedVelocity; 
   }
   
 }

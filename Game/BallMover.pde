@@ -26,15 +26,18 @@ class BallMover {
     PVector ff = v.copy();
     ff.normalize().mult(-1F * fm); 
     
-    if(this.checkCylinderCollision())
-      statsView.addScore(v.mag());
-      
-    if(this.checkEdges()) 
-      statsView.addScore(-v.mag());
-    
+    boolean edgeCollision = this.checkEdges();
+    boolean obstacleCollision = this.checkCylinderCollision();
+
     PVector a = gf.add(ff).mult(dt); // Accélération = Force de gravité + frottement
     this.v.add(a); // On ajoute l'accélération au vecteur vitesse
     
+    if(edgeCollision) 
+      statsView.addScore('e');
+      
+    if(obstacleCollision)
+      statsView.addScore('o');
+
     this.p.add(v); // On ajoute la vitesse au vecteur position
   }
   
@@ -51,10 +54,10 @@ class BallMover {
     float maxX = (plate.size.x - BALL_RADIUS) / 2f, maxZ = (plate.size.z - BALL_RADIUS) / 2f;
     
     if (p.x >  maxX) { this.v.x = -1f * ax; collision = true; }
-    if (p.x < -maxX) { this.v.x =  1f * ax; collision = true; }
+    else if (p.x < -maxX) { this.v.x =  1f * ax; collision = true; }
     
     if (p.z >  maxZ) { this.v.z = -1f * az; collision = true; }
-    if (p.z < -maxZ) { this.v.z =  1f * az; collision = true; }
+    else if (p.z < -maxZ) { this.v.z =  1f * az; collision = true; }
     
     this.p.x = Utils.clamp(this.p.x, -maxX, maxX);
     this.p.z = Utils.clamp(this.p.z, -maxZ, maxZ);

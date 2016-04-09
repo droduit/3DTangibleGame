@@ -14,7 +14,12 @@ class PlayState extends State {
     defaultCamera();
     plate.displayInfo();
     
-    statsView.drawAll();
+    pushMatrix();
+      noLights();
+      statsView.drawAll();
+    popMatrix();
+    
+    lights();
     
     if (keyPressed && keyCode == CONTROL)
       aboveCamera();

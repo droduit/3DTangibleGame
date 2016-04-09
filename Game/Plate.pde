@@ -79,7 +79,8 @@ class Plate {
   }
 
   public void mouseDraggedEvent() {
-    if(!isShiftMode) {
+
+    if(!isShiftMode && !isMouseOverScrollBar()) {
       float dy = -Utils.clamp(mouseY - pmouseY, -1, 1);
       float dx =  Utils.clamp(mouseX - pmouseX, -1, 1);
       
@@ -118,6 +119,11 @@ class Plate {
   public boolean isValidObstaclePosition(float x, float y) {
     return isInPlate(x, y) && !isBusyPosition(x, y);
   }
+  
+  public boolean isMouseOverScrollBar() {
+    return (mouseY > height-(StatsView.HEIGHT/4));
+  }
+  
   
   // Retourne les obstacles du plateau
   public ArrayList<PVector> getObstacles() {

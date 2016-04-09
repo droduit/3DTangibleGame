@@ -1,5 +1,5 @@
-final int SCREEN_WIDTH = 1000;
-final int SCREEN_HEIGHT = 1000;
+final int SCREEN_WIDTH = 1580;
+final int SCREEN_HEIGHT = 950;
 
 StateManager stateManager = new StateManager();
 

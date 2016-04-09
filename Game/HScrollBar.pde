@@ -1,4 +1,5 @@
 class HScrollbar {
+  PGraphics scrollBar;
   float barWidth; //Bar's width in pixels
   float barHeight; //Bar's height in pixels
   float xPosition; //Bar's x position in pixels
@@ -16,11 +17,12 @@ class HScrollbar {
   * @param w The width of the bar in pixels
   * @param h The height of the bar in pixels
   */
-  HScrollbar (float x, float y, float w, float h) {
+  public HScrollbar (float w, float h) {
+    scrollBar = createGraphics((int)w, (int)h,P2D);
     barWidth = w;
     barHeight = h;
-    xPosition = x;
-    yPosition = y;
+    xPosition = 0;
+    yPosition = 0;
     sliderPosition = xPosition + barWidth/2 - barHeight/2;
     newSliderPosition = sliderPosition;
     sliderPositionMin = xPosition;
@@ -31,10 +33,7 @@ class HScrollbar {
   * @brief Updates the state of the scrollbar according to the mouse movement
   */
   void update() {
-    if (isMouseOver())
-      mouseOver = true;
-    else
-      mouseOver = false;
+    mouseOver = isMouseOver();
 
     if (mousePressed && mouseOver)
       locked = true;
@@ -57,28 +56,32 @@ class HScrollbar {
   * @return Whether the mouse is hovering the scrollbar
   */
   boolean isMouseOver() {
-    if (mouseX > xPosition && mouseX < xPosition+barWidth &&
-      mouseY > yPosition && mouseY < yPosition+barHeight) {
-      return true;
-    } else {
-      return false;
-    }
+    return (mouseX > xPosition && mouseX < xPosition+barWidth &&
+      mouseY > yPosition && mouseY < yPosition+barHeight);
   }
   
   /**
   * @brief Draws the scrollbar in its current state
   */
   void display() {
-    noStroke();
-    fill(204);
-    rect(xPosition, yPosition, barWidth, barHeight);
+    scrollBar.beginDraw();
+    scrollBar.noStroke();
+    scrollBar.fill(204);
+    scrollBar.rect(xPosition, yPosition, barWidth, barHeight);
     
     if (mouseOver || locked) 
-      fill(0, 0, 0);
+      scrollBar.fill(0, 0, 0);
     else 
-      fill(102, 102, 102);
+      scrollBar.fill(102, 102, 102);
 
-    rect(sliderPosition, yPosition, barHeight, barHeight);
+    scrollBar.rect(sliderPosition, 0, barHeight, barHeight);
+    //scrollBar.rect(sliderPosition, yPosition, barHeight, barHeight);
+    scrollBar.endDraw();
+  }
+  
+  PGraphics getGraphics() {
+     display();
+     return scrollBar; 
   }
   
   /**

@@ -5,6 +5,7 @@ class StatsView {
   BallMover ballMover;
   
   private float ratio = 0f; 
+  private final int margin = 15; // Marge entre l'extrémité du ruban et des éléments
   
   // Ruban d'affichage
   private PGraphics bg; 
@@ -15,24 +16,28 @@ class StatsView {
   // Zone d'affichage de la vue de dessus
   private PGraphics topView; 
   private final color topViewColor = color(6,101,130,100);
-  private final int topViewPadding = 30; // Marge entre la surface de la vue de dessus et le ruban d'affichage
-  private final int topViewSize = HEIGHT-topViewPadding; // Taille de la zone d'affiche de la vue de dessus
+  private final int topViewSize = HEIGHT-margin; // Taille de la zone d'affiche de la vue de dessus
   private final color ballColor = color(220, 20, 20,100);
   private final color obstaclesColor = color(255,255,255, 100);
   
   // Score Board
   private PGraphics scoreBoard;
   private final int sbWidth = 150;
-  private final int sbMargin = 20;
   private final color sbColor = color(255,255,255, 100);
   private final PVector sbPos;
   private final int textSize = 14;
-  DecimalFormat numberFormat = new DecimalFormat("#0.000");
-  
-  
+  private final DecimalFormat numberFormat = new DecimalFormat("#0.000");
   private float lastScore = 0f;
   private float totalScore = 0f;
   
+  // Bar Chart
+  private PGraphics barChart;
+  private final HScrollbar objScrollBar;
+  private PGraphics scrollBar;
+  private final int scrollBarHeight = 20;
+  private final PVector bcPos;
+  private final PVector bcSize;
+  private final color bgBarChart = color(255,255,255,80);
   
   
   public StatsView(Plate plate, BallMover ballMover) {
@@ -43,10 +48,16 @@ class StatsView {
      bg = createGraphics(width, HEIGHT, P2D);
      drawBg();
      
-     sbPos = new PVector(topViewPadding/2+topViewSize+sbMargin, sbMargin/2);
-     scoreBoard = createGraphics(sbWidth, HEIGHT-sbMargin, P2D);
+     sbPos = new PVector(margin/2+topViewSize+margin, margin/2);
+     scoreBoard = createGraphics(sbWidth, HEIGHT-margin, P2D);
      
      topView = createGraphics(topViewSize, topViewSize, P2D);
+     
+     bcSize = new PVector(width-(3*margin+sbWidth+topViewSize), HEIGHT-margin-scrollBarHeight);
+     bcPos = new PVector(sbPos.x+sbWidth+margin, bgPosY+margin/2);
+     barChart = createGraphics((int)bcSize.x, (int)bcSize.y, P2D);
+     objScrollBar = new HScrollbar(bcSize.x, scrollBarHeight);
+     scrollBar = objScrollBar.getGraphics();
      
      ratio = HEIGHT / plate.size.x;
   }
@@ -100,7 +111,7 @@ class StatsView {
        scoreBoard.textSize(textSize);
        scoreBoard.textAlign(LEFT);
        pushMatrix();
-         translate(sbPos.x + sbMargin, bgPosY + sbPos.y + textSize + sbMargin);
+         translate(sbPos.x + margin, bgPosY + sbPos.y + textSize + margin);
          scoreBoard.beginDraw();
          scoreBoard.background(sbColor);
          scoreBoard.fill(color(0,0,0));
@@ -114,14 +125,29 @@ class StatsView {
      popStyle();
   }
   
+  private void drawBarChart() {
+     barChart.beginDraw();
+     barChart.background(bgBarChart);
+     barChart.endDraw();
+  }
+  
+  private void drawScrollBar() {
+    objScrollBar.update();
+    scrollBar = objScrollBar.getGraphics(); 
+  }
+  
   public void drawAll() {
      pushMatrix();
        drawScore();
        drawTopView();
+       drawBarChart();
+       drawScrollBar();
        
        image(bg, 0, bgPosY);
-       image(topView, topViewPadding/2, bgPosY+topViewPadding/2);
+       image(topView, margin/2, bgPosY+margin/2);
        image(scoreBoard, sbPos.x, bgPosY+sbPos.y);
+       image(barChart, bcPos.x, bcPos.y);
+       image(scrollBar, bcPos.x, bcPos.y+bcSize.y);
      popMatrix();
   }
   

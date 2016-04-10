@@ -23,7 +23,7 @@ void setup() {
   );
   ballMover = new BallMover(plate);
   stateManager.push(new PlayState());
-  statsView = new StatsView(plate, ballMover);
+  statsView = new StatsView();
 }
 
 void draw() {

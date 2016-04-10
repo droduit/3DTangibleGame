@@ -1,10 +1,6 @@
 import java.text.DecimalFormat;
 
 class StatsView {
-  private final Plate plate; 
-  BallMover ballMover;
-  
-  private float ratio = 0f; 
   private final int margin = 15; // Marge entre l'extrémité du ruban et des éléments
   
   // Ruban d'affichage
@@ -17,8 +13,11 @@ class StatsView {
   private PGraphics topView; 
   private final color topViewColor = color(6,101,130);
   private final int topViewSize = HEIGHT-margin; // Taille de la zone d'affiche de la vue de dessus
+  private float ratio = HEIGHT / plate.size.x;
   private final color ballColor = color(220, 20, 20);
+  private final float ballRadius = BALL_RADIUS * ratio;
   private final color obstaclesColor = color(255,255,255);
+  private final float obstaclesRadius = 2 * CYLINDER.radius * ratio;
   
   // Score Board
   private PGraphics scoreBoard;
@@ -50,11 +49,7 @@ class StatsView {
   private final int maxNbSquares;
   
   
-  public StatsView(Plate plate, BallMover ballMover) {
-    
-     this.plate = plate;
-     this.ballMover = ballMover;
-     
+  public StatsView() {
      bg = createGraphics(width, HEIGHT, P2D);
      drawBg();
      
@@ -72,7 +67,6 @@ class StatsView {
      objScrollBar = new HScrollbar(scrollBarPos.x, scrollBarPos.y, scrollBarSize.x, scrollBarSize.y);
      scrollBar = objScrollBar.getGraphics();
      
-     ratio = HEIGHT / plate.size.x;
      maxNbSquares = (int)bcSize.y / (int)sqHeight;
   }
   
@@ -91,32 +85,25 @@ class StatsView {
     
     // Balle
     topView.fill(ballColor);
-    PVector ballPos = ballMover.getPosition().copy();
-    float ballRadius = BALL_RADIUS * ratio ;
-    float posX = mapFromPlateToTopView(ballPos.x, 0, 'x');
-    float posZ = mapFromPlateToTopView(ballPos.z, 0, 'z');
-    topView.ellipse(posX, posZ, ballRadius, ballRadius);
+    PVector ballPos = mapFromPlate(ballMover.getPosition());
+    topView.ellipse(ballPos.x, ballPos.z, ballRadius, ballRadius);
     
     // Obstacles
     topView.fill(obstaclesColor);
-    float oPosX, oPosY, oSize;
-    oSize = CYLINDER.radius * ratio * 2f;
-    for(PVector o : plate.getObstacles()) {
-      oPosX = mapFromPlateToTopView(o.x, 0, 'x'); 
-      oPosY = mapFromPlateToTopView(o.y, 0, 'z');
+    for(PVector obstacle : plate.getObstacles()) {
+      PVector obstaclePos = mapFromPlate(new PVector(obstacle.x, 0, obstacle.y));
     
-      topView.ellipse(oPosX, oPosY, oSize, oSize);
+      topView.ellipse(obstaclePos.x, obstaclePos.z, obstaclesRadius, obstaclesRadius);
     }
     topView.endDraw();
   }
   
-  public float mapFromPlate(float value, float min, float max, char coord) {
-    float size = (coord=='x') ? plate.size.x : plate.size.z;
-    return map(value, -size/2F, size/2F, min, max);
-  }
-  
-  public float mapFromPlateToTopView(float pos, float size, char coord) {
-     return mapFromPlate(pos, size/2F, topViewSize-size/2F, coord);
+  private PVector mapFromPlate(PVector plateCoord) {
+    return new PVector(
+      map(plateCoord.x, -plate.size.x / 2f, plate.size.x / 2f, 0, topViewSize),
+      map(plateCoord.y, -plate.size.y / 2f, plate.size.y / 2f, 0, topViewSize),
+      map(plateCoord.z, -plate.size.z / 2f, plate.size.z / 2f, 0, topViewSize)
+    );
   }
   
   // Surface : Score Board ---------------------------------

@@ -80,7 +80,7 @@ class BallMover {
 
         v1.sub(n.mult(2 * v1.copy().dot(n)));
         this.v = new PVector(v1.x, 0, v1.y);
-        this.v.mult(e);
+        // this.v.mult(e);
         
         // On empêche la balle de traverser l'obstacle
         PVector p2Dupd = o.copy();
@@ -108,8 +108,12 @@ class BallMover {
   public PVector getPosition() {
      return p; 
   }
+<<<<<<< HEAD
   
   public PVector getVelocity() {
      return v; 
   }
 }
+=======
+}
+>>>>>>> mstone1

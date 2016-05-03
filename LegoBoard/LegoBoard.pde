@@ -1,48 +1,38 @@
+float BRIGHTNESS_LOWER_BOUND =  30.0f;
+float BRIGHTNESS_UPPER_BOUND = 200.0f;
+
+float SATURATION_LOWER_BOUND = 125.0f;
+float SATURATION_UPPER_BOUND = 255.0f;
+
 float GREEN_HUE_LOWER_BOUND = 110.0f;
-float GREEN_HUE_UPPER_BOUND = 139.0f; 
+float GREEN_HUE_UPPER_BOUND = 139.0f;
 
 void settings() {
   size(800, 600);
 }
 void setup() {
-  //noLoop(); // no interactive behaviour: draw() will be called only once.
+  noLoop(); // no interactive behaviour: draw() will be called only once.
 }
 
-PImage brightness_threshold(PImage img, float threshold, boolean invert) {
+PImage filter_threshold(PImage img, float lbBright, float upBright, float lbSat, float upSat, float lbHue, float upHue) {
   PImage result = createImage(width, height, ALPHA); // create a new, initially transparent, ’result’ image
   color black = color(0, 0, 0);
-  color white = color(255, 255, 255);
-  if (invert) {
-    color tmp = black;
-    black = white;
-    white = tmp;
-  }
   
   for(int i = 0; i < img.width * img.height; i++) {
-    result.pixels[i] = brightness(img.pixels[i]) > threshold ? black : img.pixels[i];
-  }
-  
-  return result;
-}
-
-
-PImage hue_threshold(PImage img, float lowerBound, float upperBound) {
-  PImage result = createImage(width, height, ALPHA); // create a new, initially transparent, ’result’ image
-  
-  for(int i = 0; i < img.width * img.height; i++) {
-    
+    float b = brightness(img.pixels[i]);
+    float s = saturation(img.pixels[i]);
     float h = hue(img.pixels[i]);
-    color black = color(0,0,0);
-    color white = color(255,255,255);
-    if (lowerBound <= h && h <= upperBound) {
-      result.pixels[i] = img.pixels[i];
-    } else {
+    if (b < lbBright || b > upBright ||
+        s < lbSat || s > upSat ||
+        h < lbHue || h > upHue) {
       result.pixels[i] = black;
+    } else {
+      result.pixels[i] = img.pixels[i];
     }
   }
+  
   return result;
 }
-
 
 PImage gaussian(PImage img) {
   float[][] kernel = { { 9, 12, 9 },
@@ -119,11 +109,10 @@ void draw() {
   background(color(0,0,0));
   image(sobel(
           gaussian(
-            hue_threshold(
-              brightness_threshold(loadImage("board1.jpg"), 120, false),
-              GREEN_HUE_LOWER_BOUND, 
-              GREEN_HUE_UPPER_BOUND
-            )
+            filter_threshold(loadImage("board1.jpg"), 
+            BRIGHTNESS_LOWER_BOUND, BRIGHTNESS_UPPER_BOUND, // Brightness
+            SATURATION_LOWER_BOUND, SATURATION_UPPER_BOUND, // Saturation
+            GREEN_HUE_LOWER_BOUND, GREEN_HUE_UPPER_BOUND)   // Hue
           )
         ), 0, 0);
 }

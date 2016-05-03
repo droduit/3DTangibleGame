@@ -119,7 +119,7 @@ class StatsView {
          scoreBoard.text(
             "Total score\n" + numberFormat.format(totalScore) + "\n\n" +
             "Velocity\n" + numberFormat.format(ballVelocity().mag()) + "\n\n" +
-            "Last score\n" + numberFormat.format(lastScore)
+            "Last score\n" + numberFormat.format(lastScore).replaceAll("-", "")
          , margin, textSize + margin);
          scoreBoard.endDraw();
        popMatrix();

@@ -108,12 +108,8 @@ class BallMover {
   public PVector getPosition() {
      return p; 
   }
-<<<<<<< HEAD
-  
+
   public PVector getVelocity() {
      return v; 
   }
 }
-=======
-}
->>>>>>> mstone1

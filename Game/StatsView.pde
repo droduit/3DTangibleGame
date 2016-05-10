@@ -41,9 +41,9 @@ class StatsView {
   private final PVector bcSize;
   private final color bgBarChart = color(255,255,255);
   private final ArrayList<Float> scores = new ArrayList();
-  private final color bcSqColor = topViewColor;
+  private final color bcSqColor = color(220,20,20);
   private final int sqDefaultSize = 15; // Taille par défaut d'un carré de la bar chart
-  private final int rateSavingScore = 50; // Frequence a laquelle on ajoute un score dans la bar chart
+  private final int rateSavingScore = 10; // Frequence a laquelle on ajoute un score dans la bar chart
   private float sqWidth = sqDefaultSize;
   private float sqHeight = sqDefaultSize;
   private final int maxNbSquares;
@@ -146,26 +146,30 @@ class StatsView {
      // Largeur d'un carré de la bar char
      sqWidth = sqDefaultSize * (0.5 + objScrollBar.getPos());
 
+      
+    
      // Si le total des bars peut etre entierement contenu dans la zone dédiée à la bar chart
      if ( floor(scores.size() * sqWidth) <= bcSize.x) {
+       
         // On affiche les scores du plus ancien au plus actuel
-        for (int i = 0; i < floor(bcSize.x/sqWidth); i++) {
-          for (int j = 0; j*sqHeight <= bcSize.y; j++) {
+        for (int i = 0; i < floor(bcSize.x/sqWidth) + 1; i++) {
+          for (int j = 0; j <= bcSize.y/sqHeight; j++) {
             if (i < scores.size() && j < scores.get(i) * maxNbSquares/maxScore)
-              barChart.rect(i * sqWidth, bcSize.y - (j * sqHeight), sqWidth, sqHeight);
+              barChart.rect(i*sqWidth, bcSize.y - (j * sqHeight), sqWidth, sqHeight);
           }
         }
-        
+
       } else { // Si les bar prennent plus d'espace que la largeur de la surface dédiée à la bar chart
         // On affiche les scores du plus actuel au plus ancien
         for (int i = 0; i < floor(bcSize.x/sqWidth) + 1; i++) {
           for (int j = 0; j*sqHeight <= bcSize.y; j++) {
             if (j < scores.get(scores.size() - (i+1)) * maxNbSquares/maxScore)
-              barChart.rect(ceil(sqWidth * (i+1)), bcSize.y - (j * sqHeight), sqWidth, sqHeight);
+              barChart.rect(bcSize.x - ceil(sqWidth * (i+1)), bcSize.y - (j * sqHeight), sqWidth, sqHeight);
           }
         }
 
       }
+
       
       barChart.endDraw(); //<>//
   }

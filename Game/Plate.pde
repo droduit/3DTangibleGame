@@ -100,11 +100,16 @@ class Plate {
   public boolean isInPlate(float x, float y) {
     return (x >= plateXMin && x <= plateXMax && y >= plateYMin && y <= plateYMax); 
   }
-  
-  // Indique si la position est déjà prise par un obstacle (Pas demandé donc pas encore implémenté mais idée d'amélioration!)
+
   public boolean isBusyPosition(float x, float y) {
     float busyRadius = 4 * CYLINDER.radius * CYLINDER.radius;
-
+    
+    /*
+    PVector ballPos = ballMover.getPosition();
+    if(pow(ballPos.x - x + pos.x,2) + pow(ballPos.y - y + pos.y, 2) <= busyRadius)
+      return true;
+    */
+    
     for (PVector obstacle : obstacles) {
       float dx = obstacle.x - x + pos.x,
             dy = obstacle.y - y + pos.y;

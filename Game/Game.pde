@@ -17,7 +17,7 @@ void settings() {
 void setup() {
   noStroke();
   plate = new Plate(
-    new PVector(500f, 20f, 500f),
+    new PVector(450f, 20f, 450f),
     new PVector(0f, 0f, 0f),
     new PVector(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, 0f)
   );

@@ -1,9 +1,12 @@
-import processing.video.*;
-Capture cam;
+// import processing.video.*;
+// Capture cam;
 PImage raw_img;
-PImage filtered_img;
-PImage gauss_img;
-PImage sobel_img;
+PGraphics filtered_img;
+PGraphics gauss_img;
+PGraphics sobel_img;
+PGraphics sobel_threshold_img;
+
+PShader sobel_threshold_shader;
 
 float BRIGHTNESS_LOWER_BOUND =  30.0f;
 float BRIGHTNESS_UPPER_BOUND = 200.0f;
@@ -14,38 +17,54 @@ float SATURATION_UPPER_BOUND = 255.0f;
 float GREEN_HUE_LOWER_BOUND = 100.0f;
 float GREEN_HUE_UPPER_BOUND = 139.0f;
 
-int CAM_WIDTH = 640;
-int CAM_HEIGHT = 480;
+int CAM_WIDTH = 600;
+int CAM_HEIGHT = 400;
 int CAM_FPS = 30;
 
+int sobel_last_max_update = millis() - 1000;
+float sobel_max = 0.0f;
+
 void settings() {
-  size(2*CAM_WIDTH, 2*CAM_HEIGHT);
+    size(2*CAM_WIDTH, 2*CAM_HEIGHT, P2D);
 }
 void setup() {
-  String[] cameras = Capture.list();
-  if (cameras.length == 0) {
-    println("There are no cameras available for capture.");
-    exit();
-  } else {
-    cam = new Capture(this, CAM_WIDTH, CAM_HEIGHT, CAM_FPS);
-    cam.start();
-  }
-  
-  do {
-    cam.read();
-    raw_img = cam.get();
-  } while (raw_img.width == 0 || raw_img.height == 0);
-  
-  println(raw_img.width, raw_img.height);
-  filtered_img = createImage(raw_img.width, raw_img.height, ALPHA);
-  gauss_img = createImage(raw_img.width, raw_img.height, ALPHA);
-  sobel_img = createImage(raw_img.width, raw_img.height, ALPHA);
+    raw_img = loadImage("data/board1.jpg");
+
+    filters_setup(raw_img);
+}
+
+void filters_setup(PImage base) {
+    filtered_img = createGraphics(base.width, base.height, P2D);
+    gauss_img = createGraphics(base.width, base.height, P2D);
+    sobel_img = createGraphics(base.width, base.height, P2D);
+    sobel_threshold_img = createGraphics(base.width, base.height, P2D);
+
+    PShader filtered_shader = loadShader("filter.glsl");
+    filtered_shader.set("HMIN", GREEN_HUE_LOWER_BOUND / 255f);
+    filtered_shader.set("HMAX", GREEN_HUE_UPPER_BOUND / 255f);
+    filtered_shader.set("SMIN", SATURATION_LOWER_BOUND / 255f);
+    filtered_shader.set("SMAX", SATURATION_UPPER_BOUND / 255f);
+    filtered_shader.set("VMIN", BRIGHTNESS_LOWER_BOUND / 255f);
+    filtered_shader.set("VMAX", BRIGHTNESS_UPPER_BOUND / 255f);
+    filtered_img.shader(filtered_shader);
+
+    PShader gaussian_shader = loadShader("gaussian.glsl");
+    gaussian_shader.set("resolution", (float)base.width, (float)base.height);
+    gauss_img.shader(gaussian_shader);
+
+    PShader sobel_shader = loadShader("sobel.glsl");
+    sobel_shader.set("resolution", (float)base.width, (float)base.height);
+    sobel_img.shader(sobel_shader);
+
+    sobel_threshold_shader = loadShader("sobel_threshold.glsl");
+    sobel_threshold_shader.set("threshold", 0.015);
+    sobel_threshold_img.shader(sobel_threshold_shader);
 }
 
 void hough(PImage edgeImg) {
     float discretizationStepsPhi = 0.06f;
     float discretizationStepsR = 2.5f;
-  
+
     //==============================================================================
     // dimensions of the accumulator
     int phiDim = (int) (Math.PI / discretizationStepsPhi);
@@ -63,126 +82,109 @@ void hough(PImage edgeImg) {
                 // Be careful: r may be negative, so you may want to center onto
                 // the accumulator with something like: r += (rDim - 1) / 2
                 for (float phi = 0; phi < phiDim; phi += discretizationStepsPhi) {
-                  for (float r = -rDim; r < rDim; r += discretizationStepsR ) {
-                    
-                  }
+                    for (float r = -rDim; r < rDim; r += discretizationStepsR ) {
+
+                    }
                 }
             } 
         }
     }
 }
 
-PImage filter_threshold(PImage img, float lbBright, float upBright, float lbSat, float upSat, float lbHue, float upHue) {
-  PImage result = filtered_img;
-  color black = color(0, 0, 0);
-  
-  result.loadPixels();
-  for(int i = 0; i < img.width * img.height; i++) {
-    float b = brightness(img.pixels[i]);
-    float s = saturation(img.pixels[i]);
-    float h = hue(img.pixels[i]);
-    if (b < lbBright || b > upBright ||
-        s < lbSat || s > upSat ||
-        h < lbHue || h > upHue) {
-      result.pixels[i] = black;
-    } else {
-      result.pixels[i] = img.pixels[i];
-    }
-  }
-  
-  result.updatePixels();
-  return result;
+PGraphics threshold(PImage img) {
+    filtered_img.beginDraw();
+
+    filtered_img.beginShape();
+        filtered_img.texture(img);
+        filtered_img.vertex(0, 0, 0, 0);
+        filtered_img.vertex(img.width, 0, img.width, 0);
+        filtered_img.vertex(img.width, img.height, img.width, img.height);
+        filtered_img.vertex(0, img.height, 0, img.height);
+    filtered_img.endShape();
+
+    filtered_img.endDraw();
+
+    return filtered_img;
 }
 
 PImage gaussian(PImage img) {
-  float[][] kernel = { { 9, 12, 9 },
-                       { 12, 15, 12 },
-                       { 9, 12, 9 }};
-                       
-  float weight = 99.f;
-  // create a greyscale image (type: ALPHA) for output
-  PImage result = gauss_img;
-  result.loadPixels();
-  
-  // kernel size N = 3
-  int N = 3;
-    
-  for (int y = N/2; y < img.height - N/2; ++y) {
-    for (int x = N/2; x < img.width - N/2; ++x) {
-      float sum = 0;
-      for (int dy = -N/2; dy <= N/2; ++dy) {
-        for (int dx = -N/2; dx <= N/2; ++dx) {
-          sum += brightness(img.pixels[(x+dx) + (y+dy)*img.width]) * kernel[N/2+dx][N/2+dy]/weight; 
-        }
-      }
-      result.pixels[y*img.width + x] = color(sum);
-    }
-  }
+    gauss_img.beginDraw();
 
-  result.updatePixels();
-  return result;
+    gauss_img.beginShape();
+        gauss_img.texture(img);
+        gauss_img.vertex(0, 0, 0, 0);
+        gauss_img.vertex(img.width, 0, img.width, 0);
+        gauss_img.vertex(img.width, img.height, img.width, img.height);
+        gauss_img.vertex(0, img.height, 0, img.height);
+    gauss_img.endShape();
+
+    gauss_img.endDraw();
+
+    return gauss_img;
 }
 
 PImage sobel(PImage img) {
-    float[][] hKernel = { { 0, 1, 0 },
-                          { 0, 0, 0 },
-                          { 0, -1, 0 } };
-    float[][] vKernel = { { 0, 0, 0 },
-                          { 1, 0, -1 },
-                          { 0, 0, 0 } };
-    PImage result = sobel_img;
-    result.loadPixels();
-    
-    float max=0;
-    float[] buffer = new float[img.width * img.height];
-        
-    int N = 3;
-    for (int y = N/2; y < img.height - N/2; ++y) {
-        for (int x = N/2; x < img.width - N/2; ++x) {
-            float sum_v = 0;
-            float sum_h = 0;
-            for (int dy = -N/2; dy <= N/2; ++dy) {
-                for (int dx = -N/2; dx <= N/2; ++dx) {
-                    float brightness = brightness(img.pixels[(x+dx) + (y+dy)*img.width]);
-                    sum_v += brightness * vKernel[N/2+dx][N/2+dy];
-                    sum_h += brightness * hKernel[N/2+dx][N/2+dy];
-                }
-            }
-            float sum = sqrt(pow(sum_h, 2) + pow(sum_v, 2));
-            buffer[y*img.width + x] = sum;
-            max = max(max, sum);
+    // Première passe du sobel
+    sobel_img.beginDraw();
+
+    sobel_img.beginShape();
+        sobel_img.texture(img);
+        sobel_img.vertex(0, 0, 0, 0);
+        sobel_img.vertex(img.width, 0, img.width, 0);
+        sobel_img.vertex(img.width, img.height, img.width, img.height);
+        sobel_img.vertex(0, img.height, 0, img.height);
+    sobel_img.endShape();
+
+    sobel_img.endDraw();
+
+    // On détermine le max
+    int now = millis();
+    if (now - sobel_last_max_update >= 1000) {
+        sobel_img.loadPixels();
+
+        sobel_max = 0;
+        int pixels_count = sobel_img.width * sobel_img.height;
+        for (int i = 0; i < pixels_count; i++) {
+            float val = red(sobel_img.pixels[i]);
+
+            if (val > sobel_max)
+                sobel_max = val;
         }
+
+
+        float threshold = sqrt(sobel_max / 255.0) * 0.3;
+        sobel_threshold_shader.set("threshold", threshold * threshold);
+
+        sobel_last_max_update = now;
     }
-    
-    for (int y = 2; y < img.height - 2; y++) { // Skip top and bottom edges
-        for (int x = 2; x < img.width - 2; x++) { // Skip left and right
-            if (buffer[y * img.width + x] > (int)(max * 0.3f)) { // 30% of the max
-                result.pixels[y * img.width + x] = color(255);
-            } else {
-                result.pixels[y * img.width + x] = color(0);
-            }
-        }
-    }
-    
-    result.updatePixels();
-    return result;
+
+    // Deuxième passe du sobel
+    sobel_threshold_img.beginDraw();
+
+    sobel_threshold_img.beginShape();
+        sobel_threshold_img.texture(sobel_img);
+        sobel_threshold_img.vertex(0, 0, 0, 0);
+        sobel_threshold_img.vertex(img.width, 0, img.width, 0);
+        sobel_threshold_img.vertex(img.width, img.height, img.width, img.height);
+        sobel_threshold_img.vertex(0, img.height, 0, img.height);
+    sobel_threshold_img.endShape();
+
+    sobel_threshold_img.endDraw();
+
+    return sobel_threshold_img;
 }
 
 void draw() {
-  background(color(0,0,0));
-  if (cam.available() == true) {
-    cam.read();
-  }
-  raw_img = cam.get();
-  
-  sobel(
-    filter_threshold(raw_img, 
-    BRIGHTNESS_LOWER_BOUND, BRIGHTNESS_UPPER_BOUND, // Brightness
-    SATURATION_LOWER_BOUND, SATURATION_UPPER_BOUND, // Saturation
-    GREEN_HUE_LOWER_BOUND, GREEN_HUE_UPPER_BOUND)   // Hue
-  );
-  
-  image(raw_img, 0, 0);
-  image(filtered_img, CAM_WIDTH, 0);
-  image(sobel_img, CAM_WIDTH/2, CAM_HEIGHT);
+    // background(color(0,0,0));
+
+    threshold(raw_img);
+    gaussian(filtered_img);
+    sobel(gauss_img);
+
+    image(raw_img, 0, 0, CAM_WIDTH, CAM_HEIGHT);
+    image(filtered_img, CAM_WIDTH, 0, CAM_WIDTH, CAM_HEIGHT);
+    image(gauss_img, 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
+    image(sobel_threshold_img, CAM_WIDTH, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
+
+    println(frameRate);
 }

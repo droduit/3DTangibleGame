@@ -22,7 +22,7 @@ void main (void) {
     float dy = 1.0 / resolution.y;
 
     float sum_h = brightness(TEX(0.0, -dy)) - brightness(TEX(0.0, +dy));
-    float sum_v = brightness(TEX(+dx, 0.0)) - brightness(TEX(+dx, 0.0));
+    float sum_v = brightness(TEX(-dx, 0.0)) - brightness(TEX(+dx, 0.0));
     float sum = sum_h * sum_h + sum_v * sum_v;
 
     gl_FragColor = vec4(sum, sum, sum, 1.0);

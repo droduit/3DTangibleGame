@@ -5,6 +5,8 @@ precision mediump int;
 
 #define PROCESSING_TEXTURE_SHADER
 
+#define BETWEEN(val, min, max) (step(min, val) * step(val, max))
+
 uniform float HMIN, HMAX;
 uniform float SMIN, SMAX;
 uniform float VMIN, VMAX;
@@ -26,14 +28,12 @@ vec3 rgb2hsv(vec3 c) {
 }
 
 void main (void) {
-    vec4 color = texture2D(texture, vertTexCoord.st);
-    vec3 hsv = rgb2hsv(color.rgb);
+    vec4 frag_color = texture2D(texture, vertTexCoord.st);
+    vec3 hsv = rgb2hsv(frag_color.rgb);
 
-    if (
-        HMIN <= hsv.x && hsv.x <= HMAX &&
-        SMIN <= hsv.y && hsv.y <= SMAX &&
-        VMIN <= hsv.z && hsv.z <= VMAX)
-        gl_FragColor = color;
-    else
-        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    gl_FragColor = mix(
+        vec4(0.0, 0.0, 0.0, 1.0),
+        frag_color,
+        BETWEEN(hsv.x, HMIN, HMAX) * BETWEEN(hsv.y, SMIN, SMAX) * BETWEEN(hsv.z, VMIN, VMAX)
+    );
 }

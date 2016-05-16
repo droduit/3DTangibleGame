@@ -76,22 +76,25 @@ ArrayList<PVector> hough(PImage edgeImg, int nLines) {
     
     ArrayList<Integer> bestCandidates = new ArrayList();
 
-    for(int i=0; i<accumulator.length; ++i) {
-      if(accumulator[i] > 200) 
-        bestCandidates.add(i);
-    }
+  // only search around lines with more than this amount of votes // (to be adapted to your image)
+  int minVotes = 200;
+  
+  for(int i=0; i<accumulator.length; ++i) {
+    if(accumulator[i] > minVotes) 
+      bestCandidates.add(i);
+  }
 
   // Taille de la région ou l'on cherche un maximum local
   int neighbourhood = 10;
+ 
   
-  // only search around lines with more than this amount of votes // (to be adapted to your image)
   for(int accR = 0; accR < rDim; accR++) {
     
     for(int accPhi = 0; accPhi < phiDim; accPhi++) {
       // Calcul l'index courant dans l'accumulateur
       int idx = (accPhi + 1) * (rDim + 2) + accR + 1;
       
-      if(accumulator[idx] > 200) {
+      if(accumulator[idx] > minVotes) {
         boolean bestCandidate=true;
         
         for(int dPhi=-neighbourhood/2; dPhi < neighbourhood/2+1; dPhi++) {
@@ -271,7 +274,7 @@ ArrayList<PVector> getIntersections(List<PVector> lines) {
     for (int j = i + 1; j < lines.size(); j++) {
       PVector line2 = lines.get(j);
       
-      // calcul l'intersection et l'ajoute au tableau
+      // calcul l'intersection et l'ajoute aux "intersections"
       float d = cos(line2.y)*sin(line1.y) - cos(line1.y)*sin(line2.y);
       float x = ( line2.x*sin(line1.y) - line1.x*sin(line2.y))/d;
       float y = (-line2.x*cos(line1.y) + line1.x*cos(line2.y))/d;

@@ -62,10 +62,11 @@ void hough(PImage edgeImg) {
                 // accumulator, and increment accordingly the accumulator.
                 // Be careful: r may be negative, so you may want to center onto
                 // the accumulator with something like: r += (rDim - 1) / 2
-                for (float phi = 0; phi < phiDim; phi += discretizationStepsPhi) {
-                  for (float r = -rDim; r < rDim; r += discretizationStepsR ) {
-                    
-                  }
+                for (float phi = 0; phi < Math.PI; phi += discretizationStepsPhi) {
+                  float r = x * cos(phi) + y * sin(phi);
+                  r = r / discretizationStepsR;
+                  r += (rDim - 1)/2;
+                  accumulator[(int)((1+phi/discretizationStepsPhi)*(rDim + 2) + (r + 1))]++;
                 }
             } 
         }

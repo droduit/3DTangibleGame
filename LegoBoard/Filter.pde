@@ -7,15 +7,16 @@ class Filter {
   PGraphics sobel_threshold_img;
   
   PShader sobel_threshold_shader;
-
+  PShader filtered_shader;
+  
   float BRIGHTNESS_LOWER_BOUND =  30.0f;
   float BRIGHTNESS_UPPER_BOUND = 200.0f;
   
   float SATURATION_LOWER_BOUND = 125.0f;
   float SATURATION_UPPER_BOUND = 255.0f;
   
-  float GREEN_HUE_LOWER_BOUND = 100.0f;
-  float GREEN_HUE_UPPER_BOUND = 139.0f;
+  float GREEN_HUE_LOWER_BOUND = 80.0f;
+  float GREEN_HUE_UPPER_BOUND = 130.0f;
   
   int sobel_last_max_update = millis() - 1000;
   float sobel_max = 0.0f;
@@ -38,7 +39,7 @@ class Filter {
       sobel_img = createGraphics(base.width, base.height, P2D);
       sobel_threshold_img = createGraphics(base.width, base.height, P2D);
   
-      PShader filtered_shader = loadShader("filter.glsl");
+      filtered_shader = loadShader("filter.glsl");
       filtered_shader.set("HMIN", GREEN_HUE_LOWER_BOUND / 255f);
       filtered_shader.set("HMAX", GREEN_HUE_UPPER_BOUND / 255f);
       filtered_shader.set("SMIN", SATURATION_LOWER_BOUND / 255f);
@@ -61,6 +62,13 @@ class Filter {
   }
 
   PGraphics threshold(PImage img) {
+    filtered_shader.set("HMIN", 100f / 255f);
+    filtered_shader.set("HMAX", 139f / 255f);
+    filtered_shader.set("SMIN", 125f / 255f);
+    filtered_shader.set("SMAX", 255f / 255f);
+    filtered_shader.set("VMIN", 30f / 255f);
+    filtered_shader.set("VMAX", 200f / 255f);
+      
     filtered_img.beginDraw();
 
     filtered_img.beginShape();

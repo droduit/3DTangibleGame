@@ -51,7 +51,7 @@ void setup() {
     hough_img = createImage(rDim + 2, phiDim + 2, ALPHA);
 }
  
-void hough(PImage edgeImg) {
+int[] hough(PImage edgeImg) {
     for(int i = 0, l = accumulator.length; i < l; ++i)
         accumulator[i] = 0;  
 
@@ -68,95 +68,109 @@ void hough(PImage edgeImg) {
             } 
         }
     }
-    ArrayList<Integer> bestCandidates = new ArrayList();
+    
+    return accumulator;
+}
 
-    // only search around lines with more than this amount of votes // (to be adapted to your image)
-    int minVotes = 200;
 
-    // Taille de la région ou l'on cherche un maximum local
-    int neighbourhood = 10;
-
-    for(int accR = 0; accR < rDim; accR++) {
-
-        for(int accPhi = 0; accPhi < phiDim; accPhi++) {
-            // Calcul l'index courant dans l'accumulateur
-            int idx = (accPhi + 1) * (rDim + 2) + accR + 1;
-
-            if(accumulator[idx] > minVotes) {
-                boolean bestCandidate=true;
-
-                for(int dPhi=-neighbourhood/2; dPhi < neighbourhood/2+1; dPhi++) {
-                    if(accPhi+dPhi < 0 || accPhi+dPhi >= phiDim)
-                        continue;
-
-                    for(int dR=-neighbourhood/2; dR < neighbourhood/2 +1; dR++) {
-                        // Si on est pas en dehors de l'image
-                        if (accR+dR < 0 || accR+dR >= rDim)
-                            continue;
-
-                        int neighbourIdx = (accPhi + dPhi + 1) * (rDim + 2) + accR + dR + 1;
-
-                        // l'idx actuel n'est pas un maximum local bestCandidate=false;
-                        if(accumulator[idx] < accumulator[neighbourIdx])
-                            break;
-
-                    }
-
-                    if(!bestCandidate) break;
-                }
-
-                // l'idx actuel est un maximum local
-                if(bestCandidate)
-                    bestCandidates.add(idx);
-
-            }
+void displayLines(PImage edgeImg, ArrayList<PVector> bestCandidates) {
+  for (PVector v : bestCandidates) {
+    //if (accumulator[idx] > 200) {
+        // first, compute back the (r, phi) polar coordinates:
+        float r = v.x;
+        float phi = v.y;
+  
+        // compute the intersection of this line with the 4 borders of
+        // the image
+        int x0 = 0;
+        int y0 = (int) (r / sin(phi));
+        int x1 = (int) (r / cos(phi));
+        int y1 = 0;
+        int x2 = edgeImg.width;
+        int y2 = (int) (-cos(phi) / sin(phi) * x2 + r / sin(phi));
+        int y3 = edgeImg.width;
+        int x3 = (int) (-(y3 - r / sin(phi)) * (sin(phi) / cos(phi)));
+  
+        // Finally, plot the lines
+        stroke(204,102,0);
+  
+        if (y0 > 0) {
+            if (x1 > 0)  line(x0, y0, x1, y1);
+            else if (y2 > 0)  line(x0, y0, x2, y2);
+            else line(x0, y0, x3, y3);
+        } else {
+            if (x1 > 0) {
+                if (y2 > 0) line(x1, y1, x2, y2);
+                else line(x1, y1, x3, y3);
+            } else
+                line(x2, y2, x3, y3);
         }
-    }
+   // }
+  }
+}
 
-    Collections.sort(bestCandidates, new HoughComparator(accumulator));
+ArrayList<PVector> getBestCandidates(int[] accumulator) {
+  ArrayList<Integer> bestCandidates = new ArrayList();
 
-    for (int idx : bestCandidates) {
-        if (accumulator[idx] > 200) {
-            // first, compute back the (r, phi) polar coordinates:
-            int accPhi = (int) (idx / (rDim + 2)) - 1;
-            int accR = idx - (accPhi + 1) * (rDim + 2) - 1;
-            float r = (accR - (rDim - 1) * 0.5f) * discretizationStepsR;
-            float phi = accPhi * discretizationStepsPhi;
-
-            // Cartesian equation of a line: y = ax + b
-            // in polar, y = (-cos(phi)/sin(phi))x + (r/sin(phi))
-            // => y = 0 : x = r / cos(phi)
-            // => x = 0 : y = r / sin(phi)
-
-            // compute the intersection of this line with the 4 borders of
-            // the image
-            int x0 = 0;
-            int y0 = (int) (r / sin(phi));
-            int x1 = (int) (r / cos(phi));
-            int y1 = 0;
-            int x2 = edgeImg.width;
-            int y2 = (int) (-cos(phi) / sin(phi) * x2 + r / sin(phi));
-            int y3 = edgeImg.width;
-            int x3 = (int) (-(y3 - r / sin(phi)) * (sin(phi) / cos(phi)));
-
-            // Finally, plot the lines
-            stroke(204,102,0);
-
-            if (y0 > 0) {
-                if (x1 > 0)  line(x0, y0, x1, y1);
-                else if (y2 > 0)  line(x0, y0, x2, y2);
-                else line(x0, y0, x3, y3);
-            } else {
-                if (x1 > 0) {
-                    if (y2 > 0) line(x1, y1, x2, y2);
-                    else line(x1, y1, x3, y3);
-                } else
-                    line(x2, y2, x3, y3);
-            }
-        }
-    }
-
-    displayAccumulator(accumulator, rDim, phiDim);
+  // only search around lines with more than this amount of votes // (to be adapted to your image)
+  int minVotes = 200;
+  
+  // Taille de la région ou l'on cherche un maximum local
+  int neighbourhood = 10;
+  
+  for(int accR = 0; accR < rDim; accR++) {
+  
+      for(int accPhi = 0; accPhi < phiDim; accPhi++) {
+          // Calcul l'index courant dans l'accumulateur
+          int idx = (accPhi + 1) * (rDim + 2) + accR + 1;
+  
+          if(accumulator[idx] > minVotes) {
+              boolean bestCandidate=true;
+  
+              for(int dPhi=-neighbourhood/2; dPhi < neighbourhood/2+1; dPhi++) {
+                  if(accPhi+dPhi < 0 || accPhi+dPhi >= phiDim)
+                      continue;
+  
+                  for(int dR=-neighbourhood/2; dR < neighbourhood/2 +1; dR++) {
+                      // Si on est pas en dehors de l'image
+                      if (accR+dR < 0 || accR+dR >= rDim)
+                          continue;
+  
+                      int neighbourIdx = (accPhi + dPhi + 1) * (rDim + 2) + accR + dR + 1;
+  
+                      // l'idx actuel n'est pas un maximum local bestCandidate=false;
+                      if(accumulator[idx] < accumulator[neighbourIdx])
+                          break;
+  
+                  }
+  
+                  if(!bestCandidate) break;
+              }
+  
+              // l'idx actuel est un maximum local
+              if(bestCandidate)
+                  bestCandidates.add(idx);
+          }
+      }
+  }
+  
+  Collections.sort(bestCandidates, new HoughComparator(accumulator)); 
+  
+  // On a besoin d'une liste de vecteurs pour les intersections
+  ArrayList<PVector> accBest = new ArrayList();
+  
+  for(int i = 0; i< bestCandidates.size(); i++) {
+    int idx = bestCandidates.get(i);
+    
+    int accPhi = (int) (idx / (rDim + 2)) - 1;
+    int accR = idx - (accPhi + 1) * (rDim + 2) - 1;
+    float r = (accR - (rDim - 1) * 0.5f) * discretizationStepsR;
+    float phi = accPhi * discretizationStepsPhi;
+        
+    accBest.add(new PVector(r, phi));
+  }
+  
+  return accBest;
 }
 
 class HoughComparator implements java.util.Comparator<Integer> {
@@ -174,7 +188,7 @@ class HoughComparator implements java.util.Comparator<Integer> {
   }
 }
 
-PImage displayAccumulator(int[] accumulator, int rDim, int phiDim) {
+PImage displayAccumulator(int[] accumulator) {
     for (int i = 0, l = accumulator.length; i < l; i++)
       hough_img.pixels[i] = color(min(255, accumulator[i]));
 
@@ -198,6 +212,8 @@ ArrayList<PVector> getIntersections(List<PVector> lines) {
       float x = ( line2.x*sin(line1.y) - line1.x*sin(line2.y))/d;
       float y = (-line2.x*cos(line1.y) + line1.x*cos(line2.y))/d;
 
+      intersections.add(new PVector(x, y));
+      
       fill(255, 128, 0);
       ellipse(x, y, 10, 10);
     }
@@ -224,10 +240,13 @@ void draw() {
     //image(filter.getGaussImg(), 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
     image(filter.getSobelThresholdImg(), CAM_WIDTH, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
 
-    
-    hough(filter.getSobelImg());
+    PImage edgeImg = filter.getSobelImg();
+    int[] accumulator = hough(edgeImg);
     image(hough_img, 0, CAM_HEIGHT, 400, 400);
-
+    
+    ArrayList<PVector> bestCandidates = getBestCandidates(accumulator);
+    displayLines(edgeImg, bestCandidates);
+    getIntersections(bestCandidates);
     
     println(frameRate);
 }

@@ -16,6 +16,13 @@ int CAM_WIDTH = 640;
 int CAM_HEIGHT = 480;
 int CAM_FPS = 30;
 
+float discretizationStepsPhi = 0.06f;
+float discretizationStepsR = 2.5f;
+    
+int[] accumulator;
+int phiDim = 0;
+int rDim = 0;
+
 void settings() {
     size(2*CAM_WIDTH, 2*CAM_HEIGHT, P2D);
 }
@@ -37,21 +44,26 @@ void setup() {
   
     //raw_img = loadImage("data/board1.jpg");
     filter = new Filter(raw_img); 
+    
+     //==============================================================================
+    // dimensions of the accumulator
+    phiDim = (int) (Math.PI / discretizationStepsPhi);
+    rDim = (int) (((raw_img.width + raw_img.height) * 2 + 1) / discretizationStepsR);
+    
+    // our accumulator (with a 1 pix margin around)
+    accumulator = new int[(phiDim + 2) * (rDim + 2)];
 }
  
 void hough(PImage edgeImg) {
-    float discretizationStepsPhi = 0.06f;
-    float discretizationStepsR = 2.5f;
-
-    //==============================================================================
-    // dimensions of the accumulator
-    int phiDim = (int) (Math.PI / discretizationStepsPhi);
-    int rDim = (int) (((edgeImg.width + edgeImg.height) * 2 + 1) / discretizationStepsR);
-    // our accumulator (with a 1 pix margin around)
-    int[] accumulator = new int[(phiDim + 2) * (rDim + 2)];
+    
+    for(int i = 0; i < accumulator.length; ++i) {
+      accumulator[i] = 0;  
+    }
+    
     // Fill the accumulator: on edge points (ie, white pixels of the edge // image), store all possible (r, phi) pairs describing lines going // through the point.
     for (int y = 0; y < edgeImg.height; y++) {
         for (int x = 0; x < edgeImg.width; x++) {
+           
             // Are we on an edge?
             if (brightness(edgeImg.pixels[y * edgeImg.width + x]) != 0) {
                 // ...determine here all the lines (r, phi) passing through
@@ -197,6 +209,29 @@ PImage displayAccumulator(int[] accumulator, int rDim, int phiDim) {
     houghImg.updatePixels(); 
     return houghImg;
 }
+
+
+ArrayList<PVector> getIntersections(List<PVector> lines) {
+  ArrayList<PVector> intersections = new ArrayList<PVector>();
+  
+  for (int i = 0; i < lines.size() - 1; i++) {
+    PVector line1 = lines.get(i);
+    
+    for (int j = i + 1; j < lines.size(); j++) {
+      PVector line2 = lines.get(j);
+      
+      // calcul l'intersection et l'ajoute aux "intersections"
+      float d = cos(line2.y)*sin(line1.y) - cos(line1.y)*sin(line2.y);
+      float x = ( line2.x*sin(line1.y) - line1.x*sin(line2.y))/d;
+      float y = (-line2.x*cos(line1.y) + line1.x*cos(line2.y))/d;
+
+      fill(255, 128, 0);
+      ellipse(x, y, 10, 10);
+    }
+  }
+  return intersections;
+}
+
 
 void draw() {
     background(color(0,0,0));

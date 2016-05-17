@@ -74,19 +74,20 @@ void hough(PImage edgeImg) {
     // You may want to resize the accumulator to make it easier to see:
     houghImg.resize(400, 400);
     houghImg.updatePixels(); 
-    /*
+    
     for (int idx = 0; idx < accumulator.length; idx++) {
       if (accumulator[idx] > 200) {
         // first, compute back the (r, phi) polar coordinates:
-        PVector current = lines.get(idx);
-         
-        float r = current.x;
-        float phi = current.y;
+        int accPhi = (int) (idx / (rDim + 2)) - 1;
+        int accR = idx - (accPhi + 1) * (rDim + 2) - 1;
+        float r = (accR - (rDim - 1) * 0.5f) * discretizationStepsR;
+        float phi = accPhi * discretizationStepsPhi;
         
         // Cartesian equation of a line: y = ax + b
         // in polar, y = (-cos(phi)/sin(phi))x + (r/sin(phi))
         // => y = 0 : x = r / cos(phi)
         // => x = 0 : y = r / sin(phi)
+        
         // compute the intersection of this line with the 4 borders of
         // the image
         int x0 = 0;
@@ -114,7 +115,7 @@ void hough(PImage edgeImg) {
         }
       }
     }
-    */
+    
 }
 
 PImage displayAccumulator(int[] accumulator, int rDim, int phiDim) {
@@ -146,10 +147,10 @@ void draw() {
     image(filter.getGaussImg(), 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
     image(filter.getSobelThresholdImg(), CAM_WIDTH, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
 
-  /*
+
     hough(filter.getSobelImg().copy());
     image(houghImg, 0,0,CAM_WIDTH, CAM_HEIGHT);
-    */
+
     
     println(frameRate);
 }

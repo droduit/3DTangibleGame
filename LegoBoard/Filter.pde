@@ -15,7 +15,7 @@ class Filter {
   float SATURATION_LOWER_BOUND = 125.0f;
   float SATURATION_UPPER_BOUND = 255.0f;
   
-  float GREEN_HUE_LOWER_BOUND = 80.0f;
+  float GREEN_HUE_LOWER_BOUND = 10.0f;
   float GREEN_HUE_UPPER_BOUND = 130.0f;
   
   int sobel_last_max_update = millis() - 1000;
@@ -62,13 +62,6 @@ class Filter {
   }
 
   PGraphics threshold(PImage img) {
-    filtered_shader.set("HMIN", 100f / 255f);
-    filtered_shader.set("HMAX", 139f / 255f);
-    filtered_shader.set("SMIN", 125f / 255f);
-    filtered_shader.set("SMAX", 255f / 255f);
-    filtered_shader.set("VMIN", 30f / 255f);
-    filtered_shader.set("VMAX", 200f / 255f);
-      
     filtered_img.beginDraw();
 
     filtered_img.beginShape();

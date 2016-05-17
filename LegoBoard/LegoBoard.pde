@@ -9,7 +9,7 @@ PImage raw_img;
 PImage hough_img;
 
 int CAM_WIDTH = 640;
-int CAM_HEIGHT = 480;
+int CAM_HEIGHT = 360;
 int CAM_FPS = 30;
 
 float discretizationStepsPhi = 0.06f;
@@ -155,6 +155,8 @@ void hough(PImage edgeImg) {
             }
         }
     }
+
+    displayAccumulator(accumulator, rDim, phiDim);
 }
 
 class HoughComparator implements java.util.Comparator<Integer> {
@@ -217,14 +219,14 @@ void draw() {
     filter.gaussian(filter.getFilteredImg());
     filter.sobel(filter.getGaussImg());
 
-    image(filter.getRawImg(), 0, 0, CAM_WIDTH, CAM_HEIGHT);
+    image(raw_img, 0, 0, CAM_WIDTH, CAM_HEIGHT);
     image(filter.getFilteredImg(), CAM_WIDTH, 0, CAM_WIDTH, CAM_HEIGHT);
-    image(filter.getGaussImg(), 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
+    //image(filter.getGaussImg(), 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
     image(filter.getSobelThresholdImg(), CAM_WIDTH, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
 
     
-    hough(filter.getSobelImg().copy());
-    image(hough_img, 0,0,400, 400);
+    hough(filter.getSobelImg());
+    image(hough_img, 0, CAM_HEIGHT, 400, 400);
 
     
     println(frameRate);

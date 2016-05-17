@@ -1,13 +1,14 @@
 class Filter {
-  
   PImage raw_img;
   PGraphics filtered_img;
   PGraphics gauss_img;
   PGraphics sobel_img;
   PGraphics sobel_threshold_img;
   
-  PShader sobel_threshold_shader;
   PShader filtered_shader;
+  PShader gaussian_shader;
+  PShader sobel_shader;
+  PShader sobel_threshold_shader;
   
   float BRIGHTNESS_LOWER_BOUND =  30.0f;
   float BRIGHTNESS_UPPER_BOUND = 200.0f;
@@ -15,7 +16,7 @@ class Filter {
   float SATURATION_LOWER_BOUND = 125.0f;
   float SATURATION_UPPER_BOUND = 255.0f;
   
-  float GREEN_HUE_LOWER_BOUND = 10.0f;
+  float GREEN_HUE_LOWER_BOUND = 80.0f;
   float GREEN_HUE_UPPER_BOUND = 130.0f;
   
   int sobel_last_max_update = millis() - 1000;
@@ -48,11 +49,11 @@ class Filter {
       filtered_shader.set("VMAX", BRIGHTNESS_UPPER_BOUND / 255f);
       filtered_img.shader(filtered_shader);
   
-      PShader gaussian_shader = loadShader("gaussian.glsl");
+      gaussian_shader = loadShader("gaussian.glsl");
       gaussian_shader.set("resolution", (float)base.width, (float)base.height);
       gauss_img.shader(gaussian_shader);
   
-      PShader sobel_shader = loadShader("sobel.glsl");
+      sobel_shader = loadShader("sobel.glsl");
       sobel_shader.set("resolution", (float)base.width, (float)base.height);
       sobel_img.shader(sobel_shader);
   
@@ -61,51 +62,33 @@ class Filter {
       sobel_threshold_img.shader(sobel_threshold_shader);
   }
 
+  PGraphics graphicsDraw(PGraphics dst, PImage src) {
+      dst.beginDraw();
+
+      dst.beginShape();
+          dst.texture(src);
+          dst.vertex(0, 0, 0, 0);
+          dst.vertex(dst.width, 0, src.width, 0);
+          dst.vertex(dst.width, dst.height, src.width, src.height);
+          dst.vertex(0, dst.height, 0, src.height);
+      dst.endShape();
+
+      dst.endDraw();
+
+      return dst;
+  }
+
   PGraphics threshold(PImage img) {
-    filtered_img.beginDraw();
-
-    filtered_img.beginShape();
-        filtered_img.texture(img);
-        filtered_img.vertex(0, 0, 0, 0);
-        filtered_img.vertex(img.width, 0, img.width, 0);
-        filtered_img.vertex(img.width, img.height, img.width, img.height);
-        filtered_img.vertex(0, img.height, 0, img.height);
-    filtered_img.endShape();
-
-    filtered_img.endDraw();
-
-    return filtered_img;
+    return graphicsDraw(filtered_img, img);
   }
   
   PImage gaussian(PImage img) {
-      gauss_img.beginDraw();
-  
-      gauss_img.beginShape();
-          gauss_img.texture(img);
-          gauss_img.vertex(0, 0, 0, 0);
-          gauss_img.vertex(img.width, 0, img.width, 0);
-          gauss_img.vertex(img.width, img.height, img.width, img.height);
-          gauss_img.vertex(0, img.height, 0, img.height);
-      gauss_img.endShape();
-  
-      gauss_img.endDraw();
-  
-      return gauss_img;
+      return graphicsDraw(gauss_img, img);
   }
   
   PImage sobel(PImage img) {
       // Première passe du sobel
-      sobel_img.beginDraw();
-  
-      sobel_img.beginShape();
-          sobel_img.texture(img);
-          sobel_img.vertex(0, 0, 0, 0);
-          sobel_img.vertex(img.width, 0, img.width, 0);
-          sobel_img.vertex(img.width, img.height, img.width, img.height);
-          sobel_img.vertex(0, img.height, 0, img.height);
-      sobel_img.endShape();
-  
-      sobel_img.endDraw();
+      graphicsDraw(sobel_img, img);
   
       // On détermine le max
       int now = millis();
@@ -129,19 +112,6 @@ class Filter {
       }
   
       // Deuxième passe du sobel
-      sobel_threshold_img.beginDraw();
-  
-      sobel_threshold_img.beginShape();
-          sobel_threshold_img.texture(sobel_img);
-          sobel_threshold_img.vertex(0, 0, 0, 0);
-          sobel_threshold_img.vertex(img.width, 0, img.width, 0);
-          sobel_threshold_img.vertex(img.width, img.height, img.width, img.height);
-          sobel_threshold_img.vertex(0, img.height, 0, img.height);
-      sobel_threshold_img.endShape();
-  
-      sobel_threshold_img.endDraw();
-  
-      return sobel_threshold_img;
+      return graphicsDraw(sobel_threshold_img, img);
   } 
-  
 }

@@ -15,7 +15,7 @@ class Filter {
   float SATURATION_LOWER_BOUND = 125.0f;
   float SATURATION_UPPER_BOUND = 255.0f;
   
-  float GREEN_HUE_LOWER_BOUND = 10.0f;
+  float GREEN_HUE_LOWER_BOUND = 80.0f;
   float GREEN_HUE_UPPER_BOUND = 130.0f;
   
   int sobel_last_max_update = millis() - 1000;

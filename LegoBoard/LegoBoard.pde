@@ -246,14 +246,14 @@ void draw() {
     filter.gaussian(filter.getFilteredImg());
     filter.sobel(filter.getGaussImg());
 
-    image(filter.getRawImg(), 0, 0, CAM_WIDTH, CAM_HEIGHT);
+    image(raw_img, 0, 0, CAM_WIDTH, CAM_HEIGHT);
     image(filter.getFilteredImg(), CAM_WIDTH, 0, CAM_WIDTH, CAM_HEIGHT);
-    image(filter.getGaussImg(), 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
+    //image(filter.getGaussImg(), 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
     image(filter.getSobelThresholdImg(), CAM_WIDTH, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
 
     
     hough(filter.getSobelImg().copy());
-    image(houghImg, 0,0,CAM_WIDTH, CAM_HEIGHT);
+    image(houghImg, 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
 
     
     println(frameRate);

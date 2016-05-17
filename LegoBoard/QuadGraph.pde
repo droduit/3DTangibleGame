@@ -319,13 +319,19 @@ class QuadGraph {
   
   List<int[]> filter(List<int[]> list) {
     for (int i = 0; i < list.size(); i++) {
-      v[0] = new PVector(list.get(i)[0], list.get(i)[1]);
-      v[1] = new PVector(list.get(i)[1], list.get(i)[2]);
-      v[2] = new PVector(list.get(i)[2], list.get(i)[3]);
-      v[3] = new PVector(list.get(i)[3], list.get(i)[0]);
-      if (!isConvex(v[0], v[1], v[2], v[3]) || nonFlatQuad(v[0], v[1], v[2], v[3]) || !validArea(v[0], v[1], v[2], v[3], Float.MAX_VALUE, (width * height)/10.0)) {
+      
+      for(int j = 0; j < v.length; ++j) {
+        v[j] = new PVector(list.get(i)[j], list.get(i)[(j+1)%4]); 
+      }
+      
+      if (
+        !isConvex(v[0], v[1], v[2], v[3]) ||
+        nonFlatQuad(v[0], v[1], v[2], v[3]) ||
+        !validArea(v[0], v[1], v[2], v[3], Float.MAX_VALUE, (width * height)/10.0)
+      ) {
         list.remove(i);
       }
+      
     }
     return list;
   }

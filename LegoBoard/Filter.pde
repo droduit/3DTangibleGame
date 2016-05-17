@@ -112,6 +112,6 @@ class Filter {
       }
   
       // Deuxième passe du sobel
-      return graphicsDraw(sobel_threshold_img, img);
+      return graphicsDraw(sobel_threshold_img, sobel_img);
   } 
 }

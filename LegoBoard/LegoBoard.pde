@@ -4,6 +4,7 @@ import java.util.*;
 Capture cam;
 
 Filter filter;
+QuadGraph graph;
 
 PImage raw_img;
 PImage hough_img;
@@ -49,6 +50,8 @@ void setup() {
     // our accumulator (with a 1 pix margin around)
     accumulator = new int[(phiDim + 2) * (rDim + 2)];
     hough_img = createImage(rDim + 2, phiDim + 2, ALPHA);
+    
+    graph = new QuadGraph();
 }
  
 int[] hough(PImage edgeImg) {
@@ -208,6 +211,12 @@ PImage displayAccumulator(int[] accumulator) {
     return hough_img;
 }
 
+PVector intersection(PVector v1, PVector v2) {
+  float d = cos(v2.y)*sin(v1.y) - cos(v1.y)*sin(v2.y);
+  float x = ( v2.x*sin(v1.y) - v1.x*sin(v2.y))/d;
+  float y = (-v2.x*cos(v1.y) + v1.x*cos(v2.y))/d; 
+  return new PVector(x,y);
+}
 
 ArrayList<PVector> getIntersections(List<PVector> lines) {
   ArrayList<PVector> intersections = new ArrayList<PVector>();
@@ -219,19 +228,37 @@ ArrayList<PVector> getIntersections(List<PVector> lines) {
       PVector line2 = lines.get(j);
       
       // calcul l'intersection et l'ajoute aux "intersections"
-      float d = cos(line2.y)*sin(line1.y) - cos(line1.y)*sin(line2.y);
-      float x = ( line2.x*sin(line1.y) - line1.x*sin(line2.y))/d;
-      float y = (-line2.x*cos(line1.y) + line1.x*cos(line2.y))/d;
-
-      intersections.add(new PVector(x, y));
+      PVector v = intersection(line1, line2);
+      intersections.add(v);
       
       fill(255, 128, 0);
-      ellipse(x, y, 10, 10);
+      ellipse(v.x, v.y, 10, 10);
     }
   }
   return intersections;
 }
 
+void displayQuads(ArrayList<PVector> lines, List<int[]> quads) {
+  for (int[] quad : quads) {
+    PVector l1 = lines.get(quad[0]);
+    PVector l2 = lines.get(quad[1]);
+    PVector l3 = lines.get(quad[2]);
+    PVector l4 = lines.get(quad[3]);
+    // (intersection() is a simplified version of the
+    // intersections() method you wrote last week, that simply
+    // return the coordinates of the intersection between 2 lines)
+    PVector c12 = intersection(l1, l2);
+    PVector c23 = intersection(l2, l3);
+    PVector c34 = intersection(l3, l4);
+    PVector c41 = intersection(l4, l1);
+    // Choose a random, semi-transparent colour
+    Random random = new Random();
+    fill(color(min(255, random.nextInt(300)),
+    min(255, random.nextInt(300)),
+    min(255, random.nextInt(300)), 50));
+    quad(c12.x,c12.y,c23.x,c23.y,c34.x,c34.y,c41.x,c41.y);
+  }  
+}
 
 void draw() {
     background(color(0,0,0));
@@ -255,9 +282,13 @@ void draw() {
     int[] accumulator = hough(edgeImg);
     image(hough_img, 0, CAM_HEIGHT, 400, 400);
     
-    ArrayList<PVector> bestCandidates = getBestCandidates(accumulator);
-    displayLines(edgeImg, bestCandidates);
-    getIntersections(bestCandidates);
+    ArrayList<PVector> lines = getBestCandidates(accumulator);
+    displayLines(edgeImg, lines);
+    getIntersections(lines);
+    
+    graph.build(lines, width, height);
+    List<int[]> quads = graph.filter(graph.findCycles());
+    displayQuads(lines, quads);
     
     println(frameRate);
 }

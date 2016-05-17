@@ -1,4 +1,6 @@
 import processing.video.*;
+import java.util.*;
+
 Capture cam;
 
 Filter filter;
@@ -13,6 +15,13 @@ PImage houghImg;
 int CAM_WIDTH = 640;
 int CAM_HEIGHT = 480;
 int CAM_FPS = 30;
+
+float discretizationStepsPhi = 0.06f;
+float discretizationStepsR = 2.5f;
+    
+int[] accumulator;
+int phiDim = 0;
+int rDim = 0;
 
 void settings() {
     size(2*CAM_WIDTH, 2*CAM_HEIGHT, P2D);
@@ -35,21 +44,26 @@ void setup() {
   
     //raw_img = loadImage("data/board1.jpg");
     filter = new Filter(raw_img); 
+    
+     //==============================================================================
+    // dimensions of the accumulator
+    phiDim = (int) (Math.PI / discretizationStepsPhi);
+    rDim = (int) (((raw_img.width + raw_img.height) * 2 + 1) / discretizationStepsR);
+    
+    // our accumulator (with a 1 pix margin around)
+    accumulator = new int[(phiDim + 2) * (rDim + 2)];
 }
  
 void hough(PImage edgeImg) {
-    float discretizationStepsPhi = 0.06f;
-    float discretizationStepsR = 2.5f;
-
-    //==============================================================================
-    // dimensions of the accumulator
-    int phiDim = (int) (Math.PI / discretizationStepsPhi);
-    int rDim = (int) (((edgeImg.width + edgeImg.height) * 2 + 1) / discretizationStepsR);
-    // our accumulator (with a 1 pix margin around)
-    int[] accumulator = new int[(phiDim + 2) * (rDim + 2)];
+    
+    for(int i = 0; i < accumulator.length; ++i) {
+      accumulator[i] = 0;  
+    }
+    
     // Fill the accumulator: on edge points (ie, white pixels of the edge // image), store all possible (r, phi) pairs describing lines going // through the point.
     for (int y = 0; y < edgeImg.height; y++) {
         for (int x = 0; x < edgeImg.width; x++) {
+           
             // Are we on an edge?
             if (brightness(edgeImg.pixels[y * edgeImg.width + x]) != 0) {
                 // ...determine here all the lines (r, phi) passing through
@@ -116,6 +130,73 @@ void hough(PImage edgeImg) {
       }
     }
     
+    
+    ArrayList<Integer> bestCandidates = new ArrayList();
+    
+    // only search around lines with more than this amount of votes // (to be adapted to your image)
+    int minVotes = 200;
+    
+    for(int i=0; i<accumulator.length; ++i) {
+      if(accumulator[i] > minVotes) 
+        bestCandidates.add(i);
+    }
+    
+    // Taille de la région ou l'on cherche un maximum local
+    int neighbourhood = 10;
+    
+     for(int accR = 0; accR < rDim; accR++) {
+    
+    for(int accPhi = 0; accPhi < phiDim; accPhi++) {
+      // Calcul l'index courant dans l'accumulateur
+      int idx = (accPhi + 1) * (rDim + 2) + accR + 1;
+      
+      if(accumulator[idx] > minVotes) {
+        boolean bestCandidate=true;
+        
+        for(int dPhi=-neighbourhood/2; dPhi < neighbourhood/2+1; dPhi++) {
+          if(accPhi+dPhi < 0 || accPhi+dPhi >= phiDim)
+            continue;
+          
+          for(int dR=-neighbourhood/2; dR < neighbourhood/2 +1; dR++) {
+            // Si on est pas en dehors de l'image
+            if (accR+dR < 0 || accR+dR >= rDim)
+              continue;
+              
+            int neighbourIdx = (accPhi + dPhi + 1) * (rDim + 2) + accR + dR + 1;
+            
+            // l'idx actuel n'est pas un maximum local bestCandidate=false;
+            if(accumulator[idx] < accumulator[neighbourIdx])
+              break;
+            
+          }
+          
+          if(!bestCandidate) break;
+        }
+        
+        // l'idx actuel est un maximum local
+        if(bestCandidate)
+          bestCandidates.add(idx);
+
+      }
+    }
+  }
+  
+  Collections.sort(bestCandidates, new HoughComparator(accumulator));
+}
+
+class HoughComparator implements java.util.Comparator<Integer> {
+  int[] accumulator;
+  
+  public HoughComparator(int[] accumulator) {
+    this.accumulator = accumulator;
+  }
+  
+  public int compare(Integer l1, Integer l2) {
+    if (accumulator[l1] > accumulator[l2] || (accumulator[l1] == accumulator[l2] && l1 < l2)) 
+      return -1;
+    
+    return 1;
+  }
 }
 
 PImage displayAccumulator(int[] accumulator, int rDim, int phiDim) {
@@ -128,6 +209,29 @@ PImage displayAccumulator(int[] accumulator, int rDim, int phiDim) {
     houghImg.updatePixels(); 
     return houghImg;
 }
+
+
+ArrayList<PVector> getIntersections(List<PVector> lines) {
+  ArrayList<PVector> intersections = new ArrayList<PVector>();
+  
+  for (int i = 0; i < lines.size() - 1; i++) {
+    PVector line1 = lines.get(i);
+    
+    for (int j = i + 1; j < lines.size(); j++) {
+      PVector line2 = lines.get(j);
+      
+      // calcul l'intersection et l'ajoute aux "intersections"
+      float d = cos(line2.y)*sin(line1.y) - cos(line1.y)*sin(line2.y);
+      float x = ( line2.x*sin(line1.y) - line1.x*sin(line2.y))/d;
+      float y = (-line2.x*cos(line1.y) + line1.x*cos(line2.y))/d;
+
+      fill(255, 128, 0);
+      ellipse(x, y, 10, 10);
+    }
+  }
+  return intersections;
+}
+
 
 void draw() {
     background(color(0,0,0));
@@ -147,7 +251,7 @@ void draw() {
     image(filter.getGaussImg(), 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
     image(filter.getSobelThresholdImg(), CAM_WIDTH, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
 
-
+    
     hough(filter.getSobelImg().copy());
     image(houghImg, 0,0,CAM_WIDTH, CAM_HEIGHT);
 

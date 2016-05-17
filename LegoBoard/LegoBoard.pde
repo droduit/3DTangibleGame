@@ -55,6 +55,17 @@ int[] hough(PImage edgeImg) {
     for(int i = 0, l = accumulator.length; i < l; ++i)
         accumulator[i] = 0;  
 
+    float[] tabSin = new float[phiDim];
+    float[] tabCos = new float[phiDim];
+    float ang = 0;
+    float inverseR = 1.f / discretizationStepsR;
+    
+    for (int accPhi = 0; accPhi < phiDim; ang += discretizationStepsPhi, accPhi++) {
+      // we can also pre-multiply by (1/discretizationStepsR) since we need it in the Hough loop
+      tabSin[accPhi] = (float) (Math.sin(ang) * inverseR);
+      tabCos[accPhi] = (float) (Math.cos(ang) * inverseR);
+    }
+    
     for (int y = 0; y < edgeImg.height; y++) {
         for (int x = 0; x < edgeImg.width; x++) {
             if (brightness(edgeImg.pixels[y * edgeImg.width + x]) != 0) {

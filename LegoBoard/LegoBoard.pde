@@ -21,27 +21,12 @@ int phiDim = 0;
 int rDim = 0;
 
 void settings() {
-    size(2*CAM_WIDTH, 2*CAM_HEIGHT, P2D);
+noLoop();
+    raw_img = loadImage("board4.jpg");
+
+    size(2 * raw_img.width + raw_img.height, raw_img.height, P2D);
 }
 void setup() {
-/*
-    String[] cameras = Capture.list();
-      
-    if (cameras.length == 0) {
-      println("There are no cameras available for capture.");
-      exit();
-    } else {
-      cam = new Capture(this, CAM_WIDTH, CAM_HEIGHT, CAM_FPS);
-      cam.start();
-    }
-    
-    do {
-      cam.read();
-      raw_img = cam.get();
-    } while (raw_img.width == 0 || raw_img.height == 0);
-    */
-  
-    raw_img = loadImage("data/board4.jpg");
     filter = new Filter(raw_img); 
     
      //==============================================================================
@@ -71,6 +56,7 @@ int[] hough(PImage edgeImg) {
       tabCos[accPhi] = (float) (Math.cos(ang) * inverseR);
     }
     
+    edgeImg.loadPixels();
     for (int y = 0; y < edgeImg.height; y++) {
         for (int x = 0; x < edgeImg.width; x++) {
             if (brightness(edgeImg.pixels[y * edgeImg.width + x]) != 0) {
@@ -175,7 +161,7 @@ ArrayList<PVector> getBestCandidates(int[] accumulator) {
   // On a besoin d'une liste de vecteurs pour les intersections
   ArrayList<PVector> accBest = new ArrayList();
   
-  for(int i = 0; i< bestCandidates.size(); i++) {
+  for(int i = 0; i< min(6, bestCandidates.size()); i++) {
     int idx = bestCandidates.get(i);
     
     int accPhi = (int) (idx / (rDim + 2)) - 1;
@@ -206,7 +192,7 @@ class HoughComparator implements java.util.Comparator<Integer> {
 
 PImage displayAccumulator(int[] accumulator) {
     for (int i = 0, l = accumulator.length; i < l; i++)
-      hough_img.pixels[i] = color(min(255, accumulator[i]));
+      hough_img.pixels[i] = color(min(255, accumulator[i]), 255);
 
     hough_img.updatePixels();
 
@@ -277,24 +263,33 @@ void draw() {
     filter.gaussian(filter.getFilteredImg());
     filter.sobel(filter.getGaussImg());
 
-    image(raw_img, 0, 0, CAM_WIDTH, CAM_HEIGHT);
-    image(filter.getFilteredImg(), CAM_WIDTH, 0, CAM_WIDTH, CAM_HEIGHT);
-    image(filter.getGaussImg(), 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
-    image(filter.getSobelImg(), CAM_WIDTH, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
+    // image(filter.getFilteredImg(), CAM_WIDTH, 0, CAM_WIDTH, CAM_HEIGHT);
+    // image(filter.getGaussImg(), 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
 
-/*
     PImage edgeImg = filter.getSobelImg();
     int[] accumulator = hough(edgeImg);
-    image(hough_img, 0, CAM_HEIGHT, 400, 400);
+    displayAccumulator(accumulator);
     
     ArrayList<PVector> lines = getBestCandidates(accumulator);
-    displayLines(edgeImg, lines);
-    getIntersections(lines);
+    // displayLines(edgeImg, lines);
+    // getIntersections(lines);
     
     graph.build(lines, width, height);
     List<int[]> quads = graph.filter(graph.findCycles());
+    ArrayList<PVector> selectedLines = new ArrayList<PVector>();
+    for (int lineIndex : quads.get(0))
+        selectedLines.add(lines.get(lineIndex));
+
+    image(raw_img, 0, 0);
     displayQuads(lines, quads);
-    */
+    // displayLines(edgeImg, selectedLines);
+    // getIntersections(selectedLines);
+
+    noStroke();
+    fill(color(0));
+    rect(raw_img.width, 0, raw_img.width + raw_img.height, raw_img.height);
     
+    image(hough_img, raw_img.width, 0, raw_img.height, raw_img.height);
+    image(filter.getSobelImg(), raw_img.width + raw_img.height, 0);
     println(frameRate);
 }

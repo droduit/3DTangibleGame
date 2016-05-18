@@ -24,6 +24,7 @@ void settings() {
     size(2*CAM_WIDTH, 2*CAM_HEIGHT, P2D);
 }
 void setup() {
+/*
     String[] cameras = Capture.list();
       
     if (cameras.length == 0) {
@@ -38,8 +39,9 @@ void setup() {
       cam.read();
       raw_img = cam.get();
     } while (raw_img.width == 0 || raw_img.height == 0);
+    */
   
-    //raw_img = loadImage("data/board1.jpg");
+    raw_img = loadImage("data/board4.jpg");
     filter = new Filter(raw_img); 
     
      //==============================================================================
@@ -263,11 +265,13 @@ void displayQuads(ArrayList<PVector> lines, List<int[]> quads) {
 void draw() {
     background(color(0,0,0));
     
+    /*
     if(cam.available() == true) {
       cam.read();
     }
     
     raw_img = cam.get();
+    */
     
     filter.threshold(raw_img);
     filter.gaussian(filter.getFilteredImg());
@@ -275,9 +279,10 @@ void draw() {
 
     image(raw_img, 0, 0, CAM_WIDTH, CAM_HEIGHT);
     image(filter.getFilteredImg(), CAM_WIDTH, 0, CAM_WIDTH, CAM_HEIGHT);
-    //image(filter.getGaussImg(), 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
-    image(filter.getSobelThresholdImg(), CAM_WIDTH, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
+    image(filter.getGaussImg(), 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
+    image(filter.getSobelImg(), CAM_WIDTH, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
 
+/*
     PImage edgeImg = filter.getSobelImg();
     int[] accumulator = hough(edgeImg);
     image(hough_img, 0, CAM_HEIGHT, 400, 400);
@@ -289,6 +294,7 @@ void draw() {
     graph.build(lines, width, height);
     List<int[]> quads = graph.filter(graph.findCycles());
     displayQuads(lines, quads);
+    */
     
     println(frameRate);
 }

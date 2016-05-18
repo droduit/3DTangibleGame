@@ -318,6 +318,9 @@ class QuadGraph {
   PVector[] v = new PVector[4];
   
   List<int[]> filter(List<int[]> list) {
+    ArrayList<int[]> finalList = new ArrayList<int[]>();
+
+    println("Testing quads: " + list.size());
     for (int i = 0; i < list.size(); i++) {
       
       for(int j = 0; j < v.length; ++j) {
@@ -325,15 +328,18 @@ class QuadGraph {
       }
       
       if (
-        !isConvex(v[0], v[1], v[2], v[3]) ||
-        nonFlatQuad(v[0], v[1], v[2], v[3]) ||
-        !validArea(v[0], v[1], v[2], v[3], Float.MAX_VALUE, (width * height)/10.0)
+        (!isConvex(v[0], v[1], v[2], v[3])) ||
+        (!nonFlatQuad(v[0], v[1], v[2], v[3])) ||
+        (!validArea(v[0], v[1], v[2], v[3], Float.MAX_VALUE, (width * height)/10.0))
       ) {
-        list.remove(i);
+        println("Removing " + i);
+        // zzzz...
+      } else {
+        finalList.add(list.get(i));
       }
       
     }
-    return list;
+    return finalList;
   }
 }
 

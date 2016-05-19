@@ -275,15 +275,18 @@ void draw() {
     // getIntersections(lines);
     
     graph.build(lines, width, height);
-    List<int[]> quads = graph.filter(graph.findCycles());
+    List<int[]> quads = graph.filter(lines, graph.findCycles());
+
+    println("Quads found: " + quads.size());
     ArrayList<PVector> selectedLines = new ArrayList<PVector>();
     for (int lineIndex : quads.get(0))
         selectedLines.add(lines.get(lineIndex));
 
     image(raw_img, 0, 0);
-    displayQuads(lines, quads);
-    // displayLines(edgeImg, selectedLines);
-    // getIntersections(selectedLines);
+    // displayQuads(lines, graph.findCycles());
+    // displayQuads(lines, quads);
+    displayLines(edgeImg, selectedLines);
+    getIntersections(selectedLines);
 
     noStroke();
     fill(color(0));

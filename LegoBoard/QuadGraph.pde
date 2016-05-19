@@ -317,25 +317,33 @@ class QuadGraph {
   
   PVector[] v = new PVector[4];
   
-  List<int[]> filter(List<int[]> list) {
+  List<int[]> filter(ArrayList<PVector> lines, List<int[]> quads) {
     ArrayList<int[]> finalList = new ArrayList<int[]>();
 
-    println("Testing quads: " + list.size());
-    for (int i = 0; i < list.size(); i++) {
-      
-      for(int j = 0; j < v.length; ++j) {
-        v[j] = new PVector(list.get(i)[j], list.get(i)[(j+1)%4]); 
-      }
-      
+    println("Testing quads: " + quads.size());
+    for (int i = 0; i < quads.size(); i++) {
+        int[] quad = quads.get(i);
+
+        PVector l1 = lines.get(quad[0]);
+        PVector l2 = lines.get(quad[1]);
+        PVector l3 = lines.get(quad[2]);
+        PVector l4 = lines.get(quad[3]);
+
+        PVector c12 = intersection(l1, l2);
+        PVector c23 = intersection(l2, l3);
+        PVector c34 = intersection(l3, l4);
+        PVector c41 = intersection(l4, l1);
+
       if (
-        (!isConvex(v[0], v[1], v[2], v[3])) ||
-        (!nonFlatQuad(v[0], v[1], v[2], v[3])) ||
-        (!validArea(v[0], v[1], v[2], v[3], Float.MAX_VALUE, (width * height)/10.0))
+        isConvex(c12, c23, c34, c41) &&
+        nonFlatQuad(c12, c23, c34, c41) &&
+        validArea(c12, c23, c34, c41, Float.MAX_VALUE, (width * height)/10.0)
       ) {
+        println("Keeping " + i);
+        finalList.add(quad);
+      } else {
         println("Removing " + i);
         // zzzz...
-      } else {
-        finalList.add(list.get(i));
       }
       
     }

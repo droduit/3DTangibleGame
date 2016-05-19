@@ -337,7 +337,7 @@ class QuadGraph {
       if (
         isConvex(c12, c23, c34, c41) &&
         nonFlatQuad(c12, c23, c34, c41) &&
-        validArea(c12, c23, c34, c41, Float.MAX_VALUE, (width * height)/10.0)
+        validArea(c12, c23, c34, c41, Float.MAX_VALUE, (width * height)/20.0)
       ) {
         println("Keeping " + i);
         finalList.add(quad);

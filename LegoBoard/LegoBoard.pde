@@ -261,7 +261,8 @@ void draw() {
     
     filter.threshold(raw_img);
     filter.gaussian(filter.getFilteredImg());
-    filter.sobel(filter.getGaussImg());
+    filter.intensity(filter.getGaussImg());
+    filter.sobel(filter.getIntensityImg());
 
     // image(filter.getFilteredImg(), CAM_WIDTH, 0, CAM_WIDTH, CAM_HEIGHT);
     // image(filter.getGaussImg(), 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
@@ -278,6 +279,8 @@ void draw() {
     List<int[]> quads = graph.filter(lines, graph.findCycles());
 
     println("Quads found: " + quads.size());
+    if (quads.size() == 0)
+        return;
     ArrayList<PVector> selectedLines = new ArrayList<PVector>();
     for (int lineIndex : quads.get(0))
         selectedLines.add(lines.get(lineIndex));

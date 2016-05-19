@@ -3,12 +3,14 @@ class Filter {
   PGraphics filtered_img;
   PGraphics gaussian_vert_img;
   PGraphics gaussian_horiz_img;
+  PGraphics intensity_img;
   PGraphics sobel_img;
   PGraphics sobel_threshold_img;
   
   PShader filtered_shader;
   PShader gaussian_vert_shader;
   PShader gaussian_horiz_shader;
+  PShader intensity_shader;
   PShader sobel_shader;
   PShader sobel_threshold_shader;
   
@@ -36,12 +38,14 @@ class Filter {
   public PImage getRawImg() { return raw_img; }
   public PGraphics getFilteredImg() { return filtered_img; }
   public PGraphics getGaussImg() { return gaussian_horiz_img; }
+  public PGraphics getIntensityImg() { return intensity_img; }
   public PGraphics getSobelImg() { return sobel_threshold_img; }
 
   private void init(PImage base) {
       filtered_img = createGraphics(base.width, base.height, P2D);
       gaussian_vert_img = createGraphics(base.width, base.height, P2D);
       gaussian_horiz_img = createGraphics(base.width, base.height, P2D);
+      intensity_img = createGraphics(base.width, base.height, P2D);
       sobel_img = createGraphics(base.width, base.height, P2D);
       sobel_threshold_img = createGraphics(base.width, base.height, P2D);
   
@@ -61,6 +65,10 @@ class Filter {
       gaussian_horiz_shader = loadShader("gaussian_horiz.glsl");
       gaussian_horiz_shader.set("resolution", (float)base.width, (float)base.height);
       gaussian_horiz_img.shader(gaussian_horiz_shader);
+
+      intensity_shader = loadShader("intensity.glsl");
+      intensity_shader.set("threshold", 0.076);
+      intensity_img.shader(intensity_shader);
   
       sobel_shader = loadShader("sobel.glsl");
       sobel_shader.set("resolution", (float)base.width, (float)base.height);
@@ -102,6 +110,10 @@ class Filter {
       }
 
       return input;
+  }
+
+  PGraphics intensity(PImage img) {
+    return graphicsDraw(intensity_img, img);
   }
   
   PImage sobel(PImage img) {

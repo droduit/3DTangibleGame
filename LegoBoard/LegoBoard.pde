@@ -22,7 +22,7 @@ int rDim = 0;
 
 void settings() {
 noLoop();
-    raw_img = loadImage("board4.jpg");
+    raw_img = loadImage("board1.jpg");
 
     size(2 * raw_img.width + raw_img.height, raw_img.height, P2D);
 }

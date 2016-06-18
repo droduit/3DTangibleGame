@@ -1,3 +1,5 @@
+import processing.video.*;
+
 final int SCREEN_WIDTH = 1580;
 final int SCREEN_HEIGHT = 950;
 
@@ -7,6 +9,8 @@ StateManager stateManager = new StateManager();
 Plate plate = null;
 BallMover ballMover = null;
 StatsView statsView = null;
+
+Movie mov;
 
 int lastTick = 0;
 
@@ -24,9 +28,29 @@ void setup() {
   ballMover = new BallMover(plate);
   stateManager.push(new PlayState());
   statsView = new StatsView();
+  
+  mov = new Movie(this, "video.mp4");
+  mov.loop();
 }
 
 void draw() {
+    
+    mov.read();
+    mov.updatePixels();
+    
+    PImage resized = mov.get();
+    resized.resize(0,200);
+    image(resized, 0,0);
+    
+    //PImage sob = ...;
+  
+    ArrayList<PVector> lines = hough(sob, nLines);
+    List<PVector> corners = graphQuads(lines);
+    
+    if(!corners.isEmpty()) {
+      rot = d.get3DRotations(corners);
+    }
+      
     background(255);
     lights();
     

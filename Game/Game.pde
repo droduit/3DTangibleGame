@@ -29,12 +29,14 @@ void setup() {
   stateManager.push(new PlayState());
   statsView = new StatsView();
   
+  /*
   mov = new Movie(this, "video.mp4");
   mov.loop();
+  */
 }
 
 void draw() {
-    
+    /*
     mov.read();
     mov.updatePixels();
     
@@ -42,15 +44,18 @@ void draw() {
     resized.resize(0,200);
     image(resized, 0,0);
     
-    //PImage sob = ...;
+    
+    PImage sob = ...;
   
+    // A faire :
     ArrayList<PVector> lines = hough(sob, nLines);
-    List<PVector> corners = graphQuads(lines);
+    List<PVector> corners = quads(lines);
     
     if(!corners.isEmpty()) {
       rot = d.get3DRotations(corners);
     }
-      
+    */
+    
     background(255);
     lights();
     

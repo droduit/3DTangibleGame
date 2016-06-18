@@ -1,7 +1,7 @@
 import processing.video.*;
 import java.util.*;
 
-Capture cam;
+//Capture cam;
 
 Filter filter;
 QuadGraph graph;
@@ -20,6 +20,9 @@ int[] accumulator;
 int phiDim = 0;
 int rDim = 0;
 
+TwoDThreeD d; // = new TwoDThreeD(CAM_WIDTH, CAM_HEIGHT);
+CWComparator cwc;
+/*
 void settings() {
 noLoop();
     raw_img = loadImage("board1.jpg");
@@ -40,7 +43,8 @@ void setup() {
     
     graph = new QuadGraph();
 }
- 
+*/
+
 int[] hough(PImage edgeImg) {
     for(int i = 0, l = accumulator.length; i < l; ++i)
         accumulator[i] = 0;  
@@ -248,16 +252,17 @@ void displayQuads(ArrayList<PVector> lines, List<int[]> quads) {
   }  
 }
 
+/*
 void draw() {
     background(color(0,0,0));
     
-    /*
+    
     if(cam.available() == true) {
       cam.read();
     }
     
     raw_img = cam.get();
-    */
+    
     
     filter.threshold(raw_img);
     filter.gaussian(filter.getFilteredImg());
@@ -299,3 +304,4 @@ void draw() {
     image(filter.getSobelImg(), raw_img.width + raw_img.height, 0);
     println(frameRate);
 }
+*/

@@ -19,10 +19,10 @@ class TwoDThreeD {
   
   // the 3D coordinates of the physical board corners, clockwise
    float [][] physicalCorners = {
-     {-128, -128, 0, 1}, 
-     {128, -128, 0, 1}, 
-     {128, 128, 0, 1}, 
-     {-128, 128, 0, 1}
+     {-plate.size.x/2, -plate.size.z/2, 0, 1}, 
+     {plate.size.x/2, -plate.size.z/2, 0, 1}, 
+     {plate.size.x/2, plate.size.z/2, 0, 1}, 
+     {-plate.size.x/2, plate.size.z/2, 0, 1}
               // TODO:
               // Store here the 3D coordinates of the corners of
               // the real Lego board, in homogenous coordinates

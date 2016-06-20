@@ -27,7 +27,7 @@ class State {
   public void onDraw() {
     println("WARNING - onDraw not implemented for state '" + this.name + '"');
   }
-  
+
   // Keyboard Events
   public void keyPressed() {}
   public void keyReleased() {}
@@ -40,4 +40,6 @@ class State {
   public void mouseMoved() {}
   public void mouseDragged() {}
   public void mouseWheel(MouseEvent event) {}
+
+  public void onMovieRead(Movie m) {}
 }

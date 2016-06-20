@@ -1,5 +1,7 @@
 import processing.video.*;
 
+PApplet app = this;
+
 final int SCREEN_WIDTH = 1580;
 final int SCREEN_HEIGHT = 950;
 
@@ -10,8 +12,6 @@ Plate plate = null;
 BallMover ballMover = null;
 StatsView statsView = null;
 
-Movie mov;
-
 int lastTick = 0;
 
 void settings() {
@@ -19,6 +19,7 @@ void settings() {
 }
 
 void setup() {
+  app = this;
   noStroke();
   plate = new Plate(
     new PVector(450f, 20f, 450f),
@@ -28,34 +29,9 @@ void setup() {
   ballMover = new BallMover(plate);
   stateManager.push(new PlayState());
   statsView = new StatsView();
-  
-  /*
-  mov = new Movie(this, "video.mp4");
-  mov.loop();
-  */
 }
 
 void draw() {
-    /*
-    mov.read();
-    mov.updatePixels();
-    
-    PImage resized = mov.get();
-    resized.resize(0,200);
-    image(resized, 0,0);
-    
-    
-    PImage sob = ...;
-  
-    // A faire :
-    ArrayList<PVector> lines = hough(sob, nLines);
-    List<PVector> corners = quads(lines);
-    
-    if(!corners.isEmpty()) {
-      rot = d.get3DRotations(corners);
-    }
-    */
-    
     background(255);
     lights();
     
@@ -74,3 +50,5 @@ void mousePressed() { stateManager.mousePressed(); }
 
 void keyPressed() { stateManager.keyPressed(); }
 void keyReleased() { stateManager.keyReleased(); }
+
+void movieEvent(Movie m) { println("aunierasu");stateManager.movieEvent(m); }

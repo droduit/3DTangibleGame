@@ -223,8 +223,10 @@ ArrayList<PVector> getIntersections(List<PVector> lines) {
       PVector v = intersection(line1, line2);
       intersections.add(v);
       
+      /*
       fill(255, 128, 0);
       ellipse(v.x, v.y, 10, 10);
+      */
     }
   }
   return intersections;
@@ -252,56 +254,26 @@ void displayQuads(ArrayList<PVector> lines, List<int[]> quads) {
   }  
 }
 
-/*
-void draw() {
-    background(color(0,0,0));
-    
-    
-    if(cam.available() == true) {
-      cam.read();
-    }
-    
-    raw_img = cam.get();
-    
-    
-    filter.threshold(raw_img);
+ArrayList<PVector> detectCorners(PImage input) {
+    raw_img = input;
+
+    filter.threshold(input);
     filter.gaussian(filter.getFilteredImg());
     filter.intensity(filter.getGaussImg());
     filter.sobel(filter.getIntensityImg());
 
-    // image(filter.getFilteredImg(), CAM_WIDTH, 0, CAM_WIDTH, CAM_HEIGHT);
-    // image(filter.getGaussImg(), 0, CAM_HEIGHT, CAM_WIDTH, CAM_HEIGHT);
-
-    PImage edgeImg = filter.getSobelImg();
-    int[] accumulator = hough(edgeImg);
-    displayAccumulator(accumulator);
-    
+    int[] accumulator = hough(filter.getSobelImg());
     ArrayList<PVector> lines = getBestCandidates(accumulator);
-    // displayLines(edgeImg, lines);
-    // getIntersections(lines);
-    
+
     graph.build(lines, width, height);
     List<int[]> quads = graph.filter(lines, graph.findCycles());
 
-    println("Quads found: " + quads.size());
     if (quads.size() == 0)
-        return;
+        return new ArrayList<PVector>();
+
     ArrayList<PVector> selectedLines = new ArrayList<PVector>();
     for (int lineIndex : quads.get(0))
         selectedLines.add(lines.get(lineIndex));
 
-    image(raw_img, 0, 0);
-    // displayQuads(lines, graph.findCycles());
-    // displayQuads(lines, quads);
-    displayLines(edgeImg, selectedLines);
-    getIntersections(selectedLines);
-
-    noStroke();
-    fill(color(0));
-    rect(raw_img.width, 0, raw_img.width + raw_img.height, raw_img.height);
-    
-    image(hough_img, raw_img.width, 0, raw_img.height, raw_img.height);
-    image(filter.getSobelImg(), raw_img.width + raw_img.height, 0);
-    println(frameRate);
+    return getIntersections(selectedLines);
 }
-*/

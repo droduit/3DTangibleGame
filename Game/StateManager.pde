@@ -131,4 +131,11 @@ class StateManager {
     if (currentState != null)
       currentState.mouseWheel(event);
   }
+
+  public void movieEvent(Movie m) {
+    State currentState = this.currentState();
+
+    if (currentState != null)
+      currentState.onMovieRead(m);
+  }
 }

@@ -4,102 +4,100 @@ import processing.core.PVector;
 import papaya.*;
 
 class TwoDThreeD {
-  
+
   // default focal length, well suited for most webcams
    float f = 700;
-  
+
   // intrisic camera matrix
    float [][] K = {{f,0,0},
                    {0,f,0},
                    {0,0,1}};
-  
+
   // Real physical coordinates of the Lego board in mm
    float boardSize = 380.f; // large Duplo board
   // float boardSize = 255.f; // smaller Lego board
-  
+
   // the 3D coordinates of the physical board corners, clockwise
-   float [][] physicalCorners = {
-     {-plate.size.x/2, -plate.size.z/2, 0, 1}, 
-     {plate.size.x/2, -plate.size.z/2, 0, 1}, 
-     {plate.size.x/2, plate.size.z/2, 0, 1}, 
-     {-plate.size.x/2, plate.size.z/2, 0, 1}
-              // TODO:
-              // Store here the 3D coordinates of the corners of
-              // the real Lego board, in homogenous coordinates
-              // and clockwise.
-   };
-  
+    float [][] physicalCorners = null;
+
   public TwoDThreeD(int width, int height) {
-    
+
     // set the offset to the center of the webcam image
     K[0][2] = 0.5f * width;
     K[1][2] = 0.5f * height;
-      
+
+    float [][] tmp = {
+        {-plate.size.x/2, -plate.size.z/2, 0, 1},
+        {plate.size.x/2, -plate.size.z/2, 0, 1},
+        {plate.size.x/2, plate.size.z/2, 0, 1},
+        {-plate.size.x/2, plate.size.z/2, 0, 1}
+    };
+    physicalCorners = tmp;
   }
 
    PVector get3DRotations(List<PVector> points2D) {
-    
+
     // 1- Solve the extrinsic matrix from the projected 2D points
     double[][] E = solveExtrinsicMatrix(points2D);
-    
-    
-        // 2 - Re-build a proper 3x3 rotation matrix from the camera's 
+
+
+        // 2 - Re-build a proper 3x3 rotation matrix from the camera's
     //     extrinsic matrix E
         float[] firstColumn = {(float)E[0][0],
                      (float)E[1][0],
                      (float)E[2][0]};
         firstColumn = Mat.multiply(firstColumn, 1/Mat.norm2(firstColumn)); // normalize
-        
+
         float[] secondColumn={(float)E[0][1],
                     (float)E[1][1],
                     (float)E[2][1]};
         secondColumn = Mat.multiply(secondColumn, 1/Mat.norm2(secondColumn)); // normalize
-        
+
         float[] thirdColumn = Mat.cross(firstColumn, secondColumn);
-        
+
         float[][] rotationMatrix = {
             {firstColumn[0], secondColumn[0], thirdColumn[0]},
                 {firstColumn[1], secondColumn[1], thirdColumn[1]},
                 {firstColumn[2], secondColumn[2], thirdColumn[2]}
                };
-        
+
         // 3 - Computes and returns Euler angles (rx, ry, rz) from this matrix
         return rotationFromMatrix(rotationMatrix);
-  
+
   }
-    
-    
+
+
    double[][] solveExtrinsicMatrix(List<PVector> points2D) {
-  
+
     // p ~= K · [R|t] · P
-    // with P the (3D) corners of the physical board, p the (2D) 
-    // projected points onto the webcam image, K the intrinsic 
-    // matrix and R and t the rotation and translation we want to 
+    // with P the (3D) corners of the physical board, p the (2D)
+    // projected points onto the webcam image, K the intrinsic
+    // matrix and R and t the rotation and translation we want to
     // compute.
     //
     // => We want to solve: (K^(-1) · p) X ([R|t] · P) = 0
-    
+
     float [][] invK=Mat.inverse(K);
 
     float[][] projectedCorners = new float[4][3];
-    
+
     for(int i=0;i<4;i++){
         // TODO:
-        // store in projectedCorners the result of (K^(-1) · p), for each 
+        // store in projectedCorners the result of (K^(-1) · p), for each
         // corner p found in the webcam image.
         // You can use Mat.multiply to multiply a matrix with a vector.
         PVector p = points2D.get(i);
         projectedCorners[i] = Mat.multiply(invK, new float[]{p.x, p.y, p.z+1});
     }
-    
+
     // 'A' contains the cross-product (K^(-1) · p) X P
       float[][] A= new float[12][9];
-      
+
       for(int i=0;i<4;i++){
         A[i*3][0]=0;
         A[i*3][1]=0;
         A[i*3][2]=0;
-        
+
         // note that we take physicalCorners[0,1,*3*]: we drop the Z
         // coordinate and use the 2D homogenous coordinates of the physical
         // corners

@@ -47,57 +47,57 @@ class StatsView {
   private float sqWidth = sqDefaultSize;
   private float sqHeight = sqDefaultSize;
   private final int maxNbSquares;
-  
-  
+
+
   public StatsView() {
-     bg = createGraphics(width, HEIGHT, P2D);
+     bg = createGraphics(width, HEIGHT, P3D);
      drawBg();
-     
+
      sbPos = new PVector(margin/2+topViewSize+margin, margin/2);
      scoreBoard = createGraphics(sbWidth, HEIGHT-margin, P2D);
-     
+
      topView = createGraphics(topViewSize, topViewSize, P2D);
-     
+
      bcSize = new PVector(width-(3*margin+sbWidth+topViewSize), HEIGHT-margin-scrollBarHeight);
      bcPos = new PVector(sbPos.x+sbWidth+margin, bgPosY+margin/2);
      barChart = createGraphics((int)bcSize.x, (int)bcSize.y, P2D);
-     
+
      scrollBarPos = new PVector(bcPos.x, bcPos.y+bcSize.y);
      scrollBarSize = new PVector(bcSize.x, scrollBarHeight);
      objScrollBar = new HScrollbar(scrollBarPos.x, scrollBarPos.y, scrollBarSize.x, scrollBarSize.y);
      scrollBar = objScrollBar.getGraphics();
-     
+
      maxNbSquares = (int)bcSize.y / (int)sqHeight;
   }
-  
+
   // Surface : Ruban ---------------------------------------
   void drawBg() {
      bg.beginDraw();
      bg.background(bgColor);
      bg.endDraw();
   }
-  
+
   // Surface : Vue de dessus ------------------------------------
-  void drawTopView() {  
+  void drawTopView() {
     topView.beginDraw();
     topView.background(topViewColor);
     topView.noStroke();
-    
+
     // Balle
     topView.fill(ballColor);
     PVector ballPos = mapFromPlate(ballMover.getPosition());
     topView.ellipse(ballPos.x, ballPos.z, ballRadius, ballRadius);
-    
+
     // Obstacles
     topView.fill(obstaclesColor);
     for(PVector obstacle : plate.getObstacles()) {
       PVector obstaclePos = mapFromPlate(new PVector(obstacle.x, 0, obstacle.y));
-    
+
       topView.ellipse(obstaclePos.x, obstaclePos.z, obstaclesRadius, obstaclesRadius);
     }
     topView.endDraw();
   }
-  
+
   private PVector mapFromPlate(PVector plateCoord) {
     return new PVector(
       map(plateCoord.x, -plate.size.x / 2f, plate.size.x / 2f, 0, topViewSize),
@@ -201,14 +201,14 @@ class StatsView {
     this.totalScore += lastScore;
     this.totalScore = max(0, totalScore);
   }
-  
+
   public PVector ballVelocity() {
      PVector v = ballMover.getVelocity();
      PVector formattedVelocity = v.copy();
      if(v.mag() < 0.32f)
        formattedVelocity = new PVector(0f, 0f, 0f);
-       
-     return formattedVelocity; 
+
+     return formattedVelocity;
   }
-  
+
 }

@@ -21,6 +21,20 @@ void settings() {
 void setup() {
   app = this;
   noStroke();
+  
+  filter = new Filter(createImage(640,380, ARGB));
+  
+   //==============================================================================
+ // dimensions of the accumulator
+  phiDim = (int) (Math.PI / discretizationStepsPhi);
+   rDim = (int) (((640 + 480) * 2 + 1) / discretizationStepsR);
+
+ // our accumulator (with a 1 pix margin around)
+   accumulator = new int[(phiDim + 2) * (rDim + 2)];
+   hough_img = createImage(rDim + 2, phiDim + 2, ALPHA);
+  
+  graph = new QuadGraph();
+  
   plate = new Plate(
     new PVector(450f, 20f, 450f),
     new PVector(0f, 0f, 0f),
@@ -50,5 +64,3 @@ void mousePressed() { stateManager.mousePressed(); }
 
 void keyPressed() { stateManager.keyPressed(); }
 void keyReleased() { stateManager.keyReleased(); }
-
-void movieEvent(Movie m) { println("aunierasu");stateManager.movieEvent(m); }

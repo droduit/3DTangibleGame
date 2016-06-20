@@ -79,14 +79,20 @@ class Plate {
   }
 
   public void mouseDraggedEvent() {
-
-    if(!isShiftMode && !isMouseOverScrollBar()) {
+    if (!isShiftMode && !isMouseOverScrollBar()) {
       float dy = -Utils.clamp(mouseY - pmouseY, -1, 1);
       float dx =  Utils.clamp(mouseX - pmouseX, -1, 1);
+
+      rot.x += dy * va;
+      rot.z += dx * va;
       
-      rot.x = Utils.clamp(rot.x + dy * va, MIN_ANGLE, MAX_ANGLE);
-      rot.z = Utils.clamp(rot.z + dx * va, MIN_ANGLE, MAX_ANGLE);
+      this.clampRotation();
     }
+  }
+
+  public void clampRotation() {
+    rot.x = Utils.clamp(rot.x, MIN_ANGLE, MAX_ANGLE);
+    rot.z = Utils.clamp(rot.z, MIN_ANGLE, MAX_ANGLE);
   }
   
   // Ajoute un obstacle sur le plateau

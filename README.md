@@ -2,7 +2,6 @@
 
 <p><img src="http://dominique.leroduit.com/game.jpg" /></p>
 
-<b>Group :</b> H
 <p><b>Contributors :</b></p>
 
 <ul>
@@ -10,5 +9,3 @@
 <li>Thierry Treyer</li>
 <li>Romain Gehrig</li>
 </ul>
-
-<p>This repository is public, to be visible by the teaching staff, but you are not allowed to copy the code if you find it !</p>

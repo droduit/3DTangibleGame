@@ -17,6 +17,7 @@ Jeu 3D réalisé en Java à l'aide de [Processing](https://processing.org). Le j
 sketchbook folder.<br>
   For Mac users the sketchbook folder is located inside `~/Documents/Processing`.<br>
   For Windows users the sketchbook folder is located inside folder `Documents/Processing`.
+- Open the file TangibleGame/TangibleGame.pde and click on "play" to run the game
 
 ## Authors
 - Dominique Roduit ([@droduit](https://github.com/droduit))

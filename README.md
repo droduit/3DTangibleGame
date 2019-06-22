@@ -1,6 +1,5 @@
 # 3D Tangible Game @ EPFL
 
-![Demo is charging](https://dominique.leroduit.com/external/assets/img/tangibleGame/placementObjects.gif)
 ![Demo is charging](https://dominique.leroduit.com/external/assets/img/tangibleGame/gamewithVideo.gif)
 
 ## Introduction
